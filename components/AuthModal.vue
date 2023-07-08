@@ -72,9 +72,31 @@
                             />
                         </FormGroup>
                     </div>
+                    <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
+                        <h3>Next, create your account credentials.</h3>
+                        <FormGroup>
+                            <label class="label">Account Name</label>
+                            <input type="text" class="text-input"/>
+                        </FormGroup>
+                        <FormGroup>
+                            <label class="label">Password</label>
+                            <input type="password" class="text-input"/>
+                        </FormGroup>
+                        <FormGroup>
+                            <label class="label">Confirm Password</label>
+                            <input type="password" class="text-input">
+                        </FormGroup>
+                    </div>
+                    <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
+                        <h3>Now, let's create your personal persona. <em>(Almost done!)</em></h3>
+                        <FormGroup>
+                            <label class="label">Personal Persona Username</label>
+                            <input type="text" class="text-input">
+                        </FormGroup>
+                    </div>
                 </form>
                 <form v-if="formShowStates.login" class="login">
-
+                    
                 </form>
             </template>
             <template v-slot:modalfooter>
@@ -90,6 +112,7 @@
 <script lang="ts" setup>
 
     import { computed, reactive, ref } from  'vue';
+import FormGroup from './FormGroup.vue';
 
     const tabActiveStates = reactive({
         register: true, 
@@ -110,7 +133,9 @@
 
     const registrationPartShowStates = reactive({
         0: true,
-        1: false
+        1: false, 
+        2: false, 
+        3: false
     });
 
     const selectedMonth = ref();

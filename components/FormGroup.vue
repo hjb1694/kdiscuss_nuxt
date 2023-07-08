@@ -4,7 +4,7 @@
     </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .form-group {
         margin:1rem 0;
     }

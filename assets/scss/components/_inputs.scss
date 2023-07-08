@@ -1,0 +1,19 @@
+.text-input {
+    border:1px solid #ddd;
+    border-radius:3px;
+    font-size:1.6rem;
+    padding:.8rem;
+    display:block;
+    width:100%;
+    outline:none;
+
+    &:focus {
+        border:1px solid #ffb65e;
+    }
+}
+
+.label {
+    display:block;
+    margin-bottom:3px;
+    font-size:1.3rem;
+}
