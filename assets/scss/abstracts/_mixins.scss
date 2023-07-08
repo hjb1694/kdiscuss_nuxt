@@ -11,3 +11,10 @@
     align-items: center;
     justify-content: center;
 }
+
+@mixin textBox {
+    border-radius:3px;
+    padding:1rem;
+    font-size:1.4rem;
+    color:#333;
+}

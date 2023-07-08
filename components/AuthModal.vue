@@ -71,13 +71,33 @@
                             :searchable="true"
                             />
                         </FormGroup>
+                        <div v-if="errors.dob.length" class="errbox">
+                            <ul>
+                                <li v-for="err of errors.dob">
+                                    <client-only>
+                                        <font-awesome-icon icon="fa fa-warning" class="warning-triangle"></font-awesome-icon>
+                                    </client-only>
+                                    {{ err }}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
                         <h3>Next, enter your email address.</h3>
                         <FormGroup>
                             <label class="label">Email Address</label>
-                            <input type="email" class="text-input"/>
+                            <input v-model="enteredEmail" type="email" class="text-input"/>
                         </FormGroup>
+                        <div v-if="errors.email.length" class="errbox">
+                            <ul>
+                                <li v-for="err of errors.email">
+                                    <client-only>
+                                        <font-awesome-icon icon="fa fa-warning" class="warning-triangle"></font-awesome-icon>
+                                    </client-only>
+                                    {{ err }}
+                                </li>
+                            </ul>
+                        </div>
                         <div class="info-box">
                             <p>No worries, we will not sell your personal information, and we will remain light on the emails (We promise)!</p>
                         </div>
@@ -104,6 +124,9 @@
                             <input type="text" class="text-input">
                         </FormGroup>
                     </div>
+                    <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
+                        <h3>Lastly, please agree to the following:</h3>
+                    </div>
                 </form>
                 <form v-if="formShowStates.login" class="login">
                     
@@ -122,7 +145,11 @@
 <script lang="ts" setup>
 
     import { computed, reactive, ref } from  'vue';
-import FormGroup from './FormGroup.vue';
+    import FormGroup from './FormGroup.vue';
+    import { DateTime } from 'luxon';
+    import validator from 'validator'
+
+    const today = DateTime.now();
 
     const tabActiveStates = reactive({
         register: true, 
@@ -146,12 +173,14 @@ import FormGroup from './FormGroup.vue';
         1: false, 
         2: false, 
         3: false, 
-        4: false
+        4: false, 
+        5: false
     });
 
     const selectedMonth = ref();
     const selectedDay = ref();
     const selectedYear = ref();
+    const enteredEmail = ref('');
 
     const months = [
         {
@@ -204,6 +233,11 @@ import FormGroup from './FormGroup.vue';
         }
     ]
 
+    const errors = reactive({
+        dob: reactive([]) as string[], 
+        email: reactive([]) as string[]
+    });
+
     const days = computed(() => {
         let d: number[] = [];
         for(let i = 1; i <= 31; i++){
@@ -237,7 +271,32 @@ import FormGroup from './FormGroup.vue';
 
     const currentRegStep = ref(0);
 
+    const validation = {
+        1: () => {
+            errors.dob = [] as string[];
+            !selectedMonth.value && errors.dob.push('Please select a month.');
+            !selectedDay.value && errors.dob.push('Please select a day.');
+            !selectedYear.value && errors.dob.push('Please select a year.');  
+
+            const enteredDob = DateTime.fromFormat(`${selectedMonth.value}-${selectedDay.value}-${selectedYear.value}`,'MM-dd-yyyy');
+
+            !enteredDob.isValid && errors.dob.push('Please enter a valid DOB.');
+            (today.diff(enteredDob, 'years').toObject().years < 16) && errors.dob.push('You must be at least 16 to join.');
+
+            return !!!errors.dob.length;
+        }, 
+        2: () => {
+            errors.email = [] as string[];
+            !validator.isEmail(enteredEmail.value) && errors.email.push('Please enter a valid email address.');
+
+            if(errors.email.length) return;
+
+            return !!!errors.email.length;
+        }
+    }
+
     const regNext = () => {
+        if(currentRegStep.value > 0 && !validation[currentRegStep.value]()) return;
         currentRegStep.value++;
         showRegPart(currentRegStep.value);
         let button: string;
@@ -325,9 +384,20 @@ import FormGroup from './FormGroup.vue';
     .info-box{
         background:rgb(225, 225, 245);
         border:1px solid rgb(194, 194, 237);
-        border-radius:3px;
-        padding:1rem;
-        font-size:1.4rem;
-        color:#333;
+        @include textBox;
+    }
+
+    .errbox {
+        background:rgb(255, 222, 222);
+        border:1px solid rgb(255, 163, 163);
+        @include textBox;
+
+        ul{
+            list-style:none;
+        }
+    }
+
+    .warning-triangle{
+        color: #f00;
     }
 </style>
