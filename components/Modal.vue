@@ -38,6 +38,7 @@
             z-index:1001;
             box-shadow:rgba($black,.7);
             border-radius:5px;
+            background: $white;
         }
 
         &__header, 

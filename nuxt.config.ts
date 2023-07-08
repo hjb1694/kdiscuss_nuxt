@@ -19,7 +19,7 @@ export default defineNuxtConfig({
   ], 
   googleFonts: {
     families: {
-      Poppins: true
+      Poppins: [400, 600, 700]
     }
   }, 
   // vue: {

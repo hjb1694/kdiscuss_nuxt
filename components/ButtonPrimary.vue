@@ -32,5 +32,6 @@
         text-transform: uppercase;
         padding:.7rem 1rem;
         font-size: 1.6rem;
+        font-weight: 600;
     }
 </style>

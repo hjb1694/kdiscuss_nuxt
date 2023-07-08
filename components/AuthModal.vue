@@ -9,32 +9,66 @@
             </template>
             <template v-slot:modalbody>
                 <form v-if="formShowStates.registration" class="registration">
-                    <div v-show="registrationPartShowStates.intro" class="register-part register-part--intro">
+                    <div v-show="registrationPartShowStates[0]" class="register-part register-part--intro">
                         <h2>Create an Account</h2>
+                        <ul class="benefits-list">
+                            <li>
+                                <client-only>
+                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
+                                </client-only>
+                                <p>It's FREE!</p>
+                            </li>
+                            <li>
+                                <client-only>
+                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
+                                </client-only>
+                                <p>Gain access to all Ktown Portal sites and its features</p>
+                            </li>
+                            <li>
+                                <client-only>
+                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
+                                </client-only>
+                                <p>Earn points. Redeem for REWARDS.</p>
+                            </li>
+                            <li>
+                                <client-only>
+                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
+                                </client-only>
+                                <p>Meet other Knoxvillians and form connections</p>
+                            </li>
+                        </ul>
                     </div>
-                    <div v-show="registrationPartShowStates.part1" class="register-part register-part--1">
+                    <div v-show="registrationPartShowStates[1]" class="register-part register-part--1">
                         <h3>First Things First...</h3>
                         <p class="instruction">What is your Date of Birth?</p>
                         <FormGroup>
                             <select-field 
+                            v-model="selectedMonth"
                             mode="single"
                             :options="months"
                             class="select"
                             placeholder="Month"
+                            :searchable="true"
                             />
                         </FormGroup>
                         <FormGroup>
                             <select-field 
+                            v-model="selectedDay"
+                            mode="single"
                             :options="days"
                             class="select" 
                             placeholder="Day"
+                            :searchable="true"
                             />
                         </FormGroup>
                         <FormGroup>
                             <select-field 
+                            v-model="selectedYear"
+                            mode="single"
                             :options="years"
                             class="select"
                             placeholder="Year"
+                            :searchable="true"
                             />
                         </FormGroup>
                     </div>
@@ -44,8 +78,8 @@
                 </form>
             </template>
             <template v-slot:modalfooter>
-                <ButtonPrimary v-if="formButtonShowStates.regContinueBtn" type="button">Continue</ButtonPrimary>
-                <ButtonPrimary v-if="formButtonShowStates.regNextBtn" type="button">Next</ButtonPrimary>
+                <ButtonPrimary v-if="formButtonShowStates.regContinueBtn" type="button" @click="regNext">Continue</ButtonPrimary>
+                <ButtonPrimary v-if="formButtonShowStates.regNextBtn" type="button" @click="regNext">Next</ButtonPrimary>
                 <ButtonPrimary v-if="formButtonShowStates.regCompleteBtn" type="submit" form="registration">Complete Registration</ButtonPrimary>
                 <ButtonPrimary v-if="formButtonShowStates.loginBtn" type="submit">Login</ButtonPrimary>
             </template>
@@ -55,7 +89,7 @@
 
 <script lang="ts" setup>
 
-    import { computed, reactive } from  'vue';
+    import { computed, reactive, ref } from  'vue';
 
     const tabActiveStates = reactive({
         register: true, 
@@ -75,23 +109,63 @@
     });
 
     const registrationPartShowStates = reactive({
-        intro: true,
-        part1: false
+        0: true,
+        1: false
     });
 
+    const selectedMonth = ref();
+    const selectedDay = ref();
+    const selectedYear = ref();
+
     const months = [
-        'January', 
-        'Feburary', 
-        'March', 
-        'April',
-        'May',
-        'June', 
-        'July', 
-        'August',
-        'September', 
-        'October', 
-        'November', 
-        'December'
+        {
+            value: '01', 
+            label: 'January'
+        },
+        {
+            value: '02', 
+            label: 'February'
+        },
+        {
+            value: '03', 
+            label: 'March'
+        },
+        {
+            value: '04', 
+            label: 'April'
+        },
+        {
+            value: '05', 
+            label: 'May'
+        },
+        {
+            value: '06', 
+            label: 'June'
+        },
+        {
+            value: '07', 
+            label: 'July'
+        },
+        {
+            value: '08', 
+            label: 'August'
+        },
+        {
+            value: '09', 
+            label: 'September'
+        },
+        {
+            value: '10', 
+            label: 'October'
+        }, 
+        {
+            value: '11', 
+            label: 'November'
+        },
+        {
+            value: '12', 
+            label: 'December'
+        }
     ]
 
     const days = computed(() => {
@@ -110,6 +184,34 @@
         }
         return y;
     });
+
+    const showRegPart = (part) => {
+        for(let step in registrationPartShowStates){
+            registrationPartShowStates[step] = false;
+        }
+        registrationPartShowStates[part] = true;
+    }
+
+    const showButton = (button) => {
+        for(let btn in formButtonShowStates){
+            formButtonShowStates[btn] = false;
+        }
+        formButtonShowStates[button] = true;
+    }
+
+    const currentRegStep = ref(0);
+
+    const regNext = () => {
+        currentRegStep.value++;
+        showRegPart(currentRegStep.value);
+        let button: string;
+        if(currentRegStep.value > 0 && currentRegStep.value < 3){
+            button = 'regNextBtn';
+        }else{
+            button = 'regCompleteBtn';
+        }
+        showButton(button);
+    }
 
 </script>
 
@@ -149,14 +251,38 @@
     h2, 
     h3 {
         font-size:2.2rem;
+        font-weight:400;
     }
 
     h2 {
         text-transform: uppercase;
+        letter-spacing:1px;
     }
 
     .instruction {
         font-size:1.6rem;
         margin:2rem 0;
+    }
+
+    .benefits-list{
+        list-style:none;
+        margin:2rem 0;
+        border:1px solid #f1f1f1;
+
+        li {
+            display:flex;
+            align-items: center;
+            font-size:1.4rem;
+            padding:.8rem;
+
+            &:nth-child(odd){
+                background:#f1f1f1;
+            }
+        }
+
+        p{
+            margin-left:.8rem;
+            font-size:1.6rem;
+        }
     }
 </style>
