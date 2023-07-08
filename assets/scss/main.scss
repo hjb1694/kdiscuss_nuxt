@@ -1,0 +1,10 @@
+// === ABSTRACTS ==
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+
+// === BASE ===
+@import 'base/resets';
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
