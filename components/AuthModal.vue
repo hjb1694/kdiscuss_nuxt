@@ -73,6 +73,16 @@
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
+                        <h3>Next, enter your email address.</h3>
+                        <FormGroup>
+                            <label class="label">Email Address</label>
+                            <input type="email" class="text-input"/>
+                        </FormGroup>
+                        <div class="info-box">
+                            <p>No worries, we will not sell your personal information, and we will remain light on the emails (We promise)!</p>
+                        </div>
+                    </div>
+                    <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
                         <h3>Next, create your account credentials.</h3>
                         <FormGroup>
                             <label class="label">Account Name</label>
@@ -87,7 +97,7 @@
                             <input type="password" class="text-input">
                         </FormGroup>
                     </div>
-                    <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
+                    <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
                         <h3>Now, let's create your personal persona. <em>(Almost done!)</em></h3>
                         <FormGroup>
                             <label class="label">Personal Persona Username</label>
@@ -135,7 +145,8 @@ import FormGroup from './FormGroup.vue';
         0: true,
         1: false, 
         2: false, 
-        3: false
+        3: false, 
+        4: false
     });
 
     const selectedMonth = ref();
@@ -230,7 +241,7 @@ import FormGroup from './FormGroup.vue';
         currentRegStep.value++;
         showRegPart(currentRegStep.value);
         let button: string;
-        if(currentRegStep.value > 0 && currentRegStep.value < 3){
+        if(currentRegStep.value > 0 && currentRegStep.value < 5){
             button = 'regNextBtn';
         }else{
             button = 'regCompleteBtn';
@@ -309,5 +320,14 @@ import FormGroup from './FormGroup.vue';
             margin-left:.8rem;
             font-size:1.6rem;
         }
+    }
+
+    .info-box{
+        background:rgb(225, 225, 245);
+        border:1px solid rgb(194, 194, 237);
+        border-radius:3px;
+        padding:1rem;
+        font-size:1.4rem;
+        color:#333;
     }
 </style>
