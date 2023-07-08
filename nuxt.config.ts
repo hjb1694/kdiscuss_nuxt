@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     }
   }, 
   css: [
-    '@fortawesome/fontawesome-svg-core/styles.css'
+    '@fortawesome/fontawesome-svg-core/styles.css', 
+    '@vueform/multiselect/themes/default.css'
   ], 
   modules: [
     '@nuxtjs/google-fonts'
@@ -20,5 +21,10 @@ export default defineNuxtConfig({
     families: {
       Poppins: true
     }
-  }
+  }, 
+  // vue: {
+  //   compilerOptions: {
+  //     isCustomElement: tag => ['select-field'].includes(tag)
+  //   }
+  // }
 })

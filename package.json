@@ -19,6 +19,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@vueform/multiselect": "^2.6.2",
     "sass": "^1.63.6"
   }
 }
