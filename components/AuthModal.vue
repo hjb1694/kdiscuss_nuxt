@@ -3,8 +3,22 @@
         <Modal @closeModal="closeAuthModal">
             <template v-slot:modalheader>
                 <div class="tabs">
-                    <button class="tab-btn" :class="{active: tabActiveStates.register}">Register</button>
-                    <button class="tab-btn" :class="{active: tabActiveStates.login}">Login</button>
+                    <button 
+                    class="tab-btn" 
+                    :class="{active: tabActiveStates.registration}" 
+                    :disabled="tabActiveStates.registration" 
+                    @click="toggleFormShowState('registration')"
+                    >
+                    Register
+                    </button>
+                    <button 
+                    class="tab-btn" 
+                    :class="{active: tabActiveStates.login}" 
+                    :disabled="tabActiveStates.login" 
+                    @click="toggleFormShowState('login')"
+                    >
+                    Login
+                    </button>
                 </div>
             </template>
             <template v-slot:modalbody>
@@ -63,9 +77,9 @@
                             :searchable="true"
                             />
                         </FormGroup>
-                        <div v-if="errors.dob.length" class="errbox">
+                        <div v-if="registrationErrors.dob.length" class="errbox">
                             <ul>
-                                <li v-for="err of errors.dob">
+                                <li v-for="err of registrationErrors.dob">
                                     <Icon icon="fa fa-warning" color="#f00" />
                                     {{ err }}
                                 </li>
@@ -78,9 +92,9 @@
                             <label class="label">Email Address</label>
                             <input v-model="enteredEmail" type="email" class="text-input"/>
                         </FormGroup>
-                        <div v-if="errors.email.length" class="errbox">
+                        <div v-if="registrationErrors.email.length" class="errbox">
                             <ul>
-                                <li v-for="err of errors.email">
+                                <li v-for="err of registrationErrors.email">
                                     <Icon icon="fa fa-warning" color="#f00" />
                                     {{ err }}
                                 </li>
@@ -141,7 +155,6 @@
     import { computed, reactive, ref } from  'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
-    import { storeToRefs } from 'pinia';
 
     const modalStore = useModalStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
@@ -150,7 +163,7 @@
     const today = DateTime.now();
 
     const tabActiveStates = reactive({
-        register: true, 
+        registration: true, 
         login: false
     });
 
@@ -233,7 +246,7 @@
         }
     ]
 
-    const errors = reactive({
+    const registrationErrors = reactive({
         dob: reactive([]) as string[], 
         email: reactive([]) as string[]
     });
@@ -277,25 +290,25 @@
 
     const validation = {
         1: () => {
-            errors.dob = [] as string[];
-            !selectedMonth.value && errors.dob.push('Please select a month.');
-            !selectedDay.value && errors.dob.push('Please select a day.');
-            !selectedYear.value && errors.dob.push('Please select a year.');  
+            registrationErrors.dob = [] as string[];
+            !selectedMonth.value && registrationErrors.dob.push('Please select a month.');
+            !selectedDay.value && registrationErrors.dob.push('Please select a day.');
+            !selectedYear.value && registrationErrors.dob.push('Please select a year.');  
 
             const enteredDob = DateTime.fromFormat(`${selectedMonth.value}-${selectedDay.value}-${selectedYear.value}`,'MM-dd-yyyy');
 
-            !enteredDob.isValid && errors.dob.push('Please enter a valid DOB.');
-            (today.diff(enteredDob, 'years').toObject().years < 16) && errors.dob.push('You must be at least 16 to join.');
+            !enteredDob.isValid && registrationErrors.dob.push('Please enter a valid DOB.');
+            (today.diff(enteredDob, 'years').toObject().years < 16) && registrationErrors.dob.push('You must be at least 16 to join.');
 
-            return !!!errors.dob.length;
+            return !!!registrationErrors.dob.length;
         }, 
         2: () => {
-            errors.email = [] as string[];
-            !validator.isEmail(enteredEmail.value) && errors.email.push('Please enter a valid email address.');
+            registrationErrors.email = [] as string[];
+            !validator.isEmail(enteredEmail.value) && registrationErrors.email.push('Please enter a valid email address.');
 
-            if(errors.email.length) return;
+            if(registrationErrors.email.length) return;
 
-            return !!!errors.email.length;
+            return !!!registrationErrors.email.length;
         }, 
         3: () => {
             return true;
@@ -316,6 +329,30 @@
             button = 'regCompleteBtn';
         }
         showButton(button);
+    }
+
+    const toggleFormShowState = (form: string) => {
+        formShowStates.login = false;
+        formShowStates.registration = false;
+        resetRegistrationForm();
+        formShowStates[form] = true;
+        tabActiveStates.login = false;
+        tabActiveStates.registration = false;
+        tabActiveStates[form] = true;
+    }
+
+
+    const resetRegistrationForm = () => {
+        currentRegStep.value = 0;
+        showRegPart(0);
+        showButton('regContinueBtn');
+        selectedMonth.value = null;
+        selectedDay.value = null;
+        selectedYear.value = null;
+        agreeRules.value = false;
+        agreeTos.value = false
+        registrationErrors.dob = [];
+        registrationErrors.email = [];
     }
 
 </script>
@@ -350,6 +387,10 @@
         &.active {
             background:#ddd;
             box-shadow:inset 0 0 .5rem rgba($black, .2);
+        }
+
+        &:disabled {
+            color: $black;
         }
     }
 

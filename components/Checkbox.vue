@@ -1,7 +1,7 @@
 <template>
     <div class="outer">
         <label>
-            <input type="checkbox" class="checkbox-input" @change="checkboxOnChange($event)">
+            <input type="checkbox" ref="checkboxInp" class="checkbox-input" @change="checkboxOnChange($event)">
             <div class="checkbox">
                 <client-only>
                     <font-awesome-icon class="check-icon" icon="fa fa-check"/>
@@ -13,7 +13,10 @@
 </template>
 
 <script lang="ts" setup>
-    import { PropType } from 'vue';
+
+    import { PropType, watch , ref} from 'vue';
+
+    const checkboxInp = ref<HTMLInputElement>();
 
     const props = defineProps({
         label: {
@@ -26,6 +29,10 @@
     })
 
     const emit = defineEmits(['update:modelValue']);
+
+    watch(() => props.modelValue, (newValue) => {
+        checkboxInp.value!.checked = newValue!;
+    })
 
     const checkboxOnChange = (evt: any) => {
         emit('update:modelValue', evt.target.checked);
