@@ -29,4 +29,10 @@ export default defineNuxtConfig({
       ['defineStore', 'definePiniaStore'],
     ],
   },
+  imports: {
+    autoImport: true,
+    dirs: [
+      'stores/**'
+    ]
+  }
 })

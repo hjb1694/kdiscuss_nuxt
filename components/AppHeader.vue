@@ -2,16 +2,20 @@
     <div>
         <header class="app-header">
             <img src="~/assets/img/kd_logo.png" alt="Knox Discuss Logo" class="logo"/>
-            <button class="login-btn">
-                <client-only>
-                    <font-awesome-icon icon="fas fa-user" :style="{color: '#fff', marginRight: '.5rem'}"></font-awesome-icon>
-                </client-only>
+            <button @click="toggleAuthModal(true)" class="login-btn">
+                <Icon icon="fa fa-user" color="#fff" />
                 <span>Login / Register</span>
             </button>
         </header>
         <AuthModal/>
     </div>
 </template>
+
+<script lang="ts" setup>
+    
+    const { toggleAuthModal } = useModalStore();
+
+</script>
 
 <style lang="scss">
     .app-header {

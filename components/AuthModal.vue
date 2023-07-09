@@ -1,6 +1,6 @@
 <template>
-    <div class="auth-modal">
-        <Modal>
+    <div v-if="authModalIsOpen" class="auth-modal">
+        <Modal @closeModal="closeAuthModal">
             <template v-slot:modalheader>
                 <div class="tabs">
                     <button class="tab-btn" :class="{active: tabActiveStates.register}">Register</button>
@@ -141,6 +141,11 @@
     import { computed, reactive, ref } from  'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
+    import { storeToRefs } from 'pinia';
+
+    const modalStore = useModalStore();
+    const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
+    const toggleAuthModal = modalStore.toggleAuthModal;
 
     const today = DateTime.now();
 
@@ -262,6 +267,10 @@
             formButtonShowStates[btn] = false;
         }
         formButtonShowStates[button] = true;
+    }
+
+    const closeAuthModal = () => {
+        toggleAuthModal(false);
     }
 
     const currentRegStep = ref(0);

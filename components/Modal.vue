@@ -1,10 +1,10 @@
 <template>
     <div class="modal">
-        <div class="modal__backdrop"></div>
+        <div class="modal__backdrop" @click="closeModal"></div>
         <div class="modal__dialog">
             <header class="modal__header">
                 <slot name="modalheader"></slot>
-                <button class="modal__close-btn">
+                <button class="modal__close-btn" @click="closeModal">
                     <client-only>
                         <font-awesome-icon icon="fa fa-times"></font-awesome-icon>
                     </client-only>
@@ -19,6 +19,16 @@
         </div>
     </div>
 </template>
+
+<script lang="ts" setup>
+
+    const emits = defineEmits(['closeModal']);
+
+    function closeModal() {
+        emits('closeModal');
+    }
+
+</script>
 
 <style lang="scss" scoped>
     .modal{
@@ -39,6 +49,7 @@
             box-shadow:rgba($black,.7);
             border-radius:5px;
             background: $white;
+            animation: fadeSlideDown .3s forwards;
         }
 
         &__header, 
@@ -68,5 +79,10 @@
             align-items: center;
             justify-content: flex-end;
         }
+    }
+
+    @keyframes fadeSlideDown {
+        from{opacity:0; transform:translateY(-5rem)}
+        to{opacity:1; transform:translateY(0)}
     }
 </style>
