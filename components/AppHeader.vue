@@ -43,4 +43,14 @@
         text-transform: uppercase;
         box-shadow:0 0 .5rem rgba($black,.5);
     }
+
+    @media (max-width: 600px) {
+        .logo {
+            width:16rem;
+        }
+
+        .login-btn {
+            font-size:1.2rem;
+        }
+    }
 </style>
