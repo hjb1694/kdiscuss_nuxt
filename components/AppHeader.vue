@@ -52,5 +52,9 @@
         .login-btn {
             font-size:1.2rem;
         }
+
+        .app-header {
+            height:8rem;
+        }
     }
 </style>
