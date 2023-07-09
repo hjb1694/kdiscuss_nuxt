@@ -20,9 +20,14 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@pinia/nuxt": "^0.4.11",
     "@vueform/multiselect": "^2.6.2",
     "luxon": "^3.3.0",
+    "pinia": "^2.1.4",
     "sass": "^1.63.6",
     "validator": "^13.9.0"
+  },
+  "overrides": {
+    "vue": "latest"
   }
 }

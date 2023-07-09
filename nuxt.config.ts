@@ -15,16 +15,18 @@ export default defineNuxtConfig({
     '@vueform/multiselect/themes/default.css'
   ], 
   modules: [
-    '@nuxtjs/google-fonts'
+    '@nuxtjs/google-fonts', 
+    '@pinia/nuxt'
   ], 
   googleFonts: {
     families: {
       Poppins: [400, 600, 700]
     }
   }, 
-  // vue: {
-  //   compilerOptions: {
-  //     isCustomElement: tag => ['select-field'].includes(tag)
-  //   }
-  // }
+  pinia: {
+    autoImports: [
+      'defineStore', 
+      ['defineStore', 'definePiniaStore'],
+    ],
+  },
 })
