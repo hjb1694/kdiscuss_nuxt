@@ -126,6 +126,12 @@
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
                         <h3>Lastly, please agree to the following:</h3>
+                        <FormGroup>
+                            <Checkbox v-model="agreeRules" label="I agree to abide by the platform rules."/>
+                        </FormGroup>
+                        <FormGroup>
+                            <Checkbox v-model="agreeTos" label="I agree to the Terms of Service."/>
+                        </FormGroup>
                     </div>
                 </form>
                 <form v-if="formShowStates.login" class="login">
@@ -145,9 +151,9 @@
 <script lang="ts" setup>
 
     import { computed, reactive, ref } from  'vue';
-    import FormGroup from './FormGroup.vue';
     import { DateTime } from 'luxon';
-    import validator from 'validator'
+    import validator from 'validator';
+import { triggerAsyncId } from 'async_hooks';
 
     const today = DateTime.now();
 
@@ -181,6 +187,8 @@
     const selectedDay = ref();
     const selectedYear = ref();
     const enteredEmail = ref('');
+    const agreeRules = ref(false);
+    const agreeTos = ref(false);
 
     const months = [
         {
@@ -292,6 +300,12 @@
             if(errors.email.length) return;
 
             return !!!errors.email.length;
+        }, 
+        3: () => {
+            return true;
+        }, 
+        4: () => {
+            return true;
         }
     }
 
