@@ -13,27 +13,19 @@
                         <h2>Create an Account</h2>
                         <ul class="benefits-list">
                             <li>
-                                <client-only>
-                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
-                                </client-only>
+                                <Icon icon="fa fa-globe"/>
                                 <p>It's FREE!</p>
                             </li>
                             <li>
-                                <client-only>
-                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
-                                </client-only>
+                                <Icon icon="fa fa-globe"/>
                                 <p>Gain access to all Ktown Portal sites and its features</p>
                             </li>
                             <li>
-                                <client-only>
-                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
-                                </client-only>
+                                <Icon icon="fa fa-globe" />
                                 <p>Earn points. Redeem for REWARDS.</p>
                             </li>
                             <li>
-                                <client-only>
-                                    <font-awesome-icon icon="fa fa-globe"></font-awesome-icon>
-                                </client-only>
+                                <Icon icon="fa fa-globe" />
                                 <p>Meet other Knoxvillians and form connections</p>
                             </li>
                         </ul>
@@ -74,9 +66,7 @@
                         <div v-if="errors.dob.length" class="errbox">
                             <ul>
                                 <li v-for="err of errors.dob">
-                                    <client-only>
-                                        <font-awesome-icon icon="fa fa-warning" class="warning-triangle"></font-awesome-icon>
-                                    </client-only>
+                                    <Icon icon="fa fa-warning" color="#f00" />
                                     {{ err }}
                                 </li>
                             </ul>
@@ -91,9 +81,7 @@
                         <div v-if="errors.email.length" class="errbox">
                             <ul>
                                 <li v-for="err of errors.email">
-                                    <client-only>
-                                        <font-awesome-icon icon="fa fa-warning" class="warning-triangle"></font-awesome-icon>
-                                    </client-only>
+                                    <Icon icon="fa fa-warning" color="#f00" />
                                     {{ err }}
                                 </li>
                             </ul>
@@ -153,7 +141,6 @@
     import { computed, reactive, ref } from  'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
-import { triggerAsyncId } from 'async_hooks';
 
     const today = DateTime.now();
 
@@ -409,9 +396,5 @@ import { triggerAsyncId } from 'async_hooks';
         ul{
             list-style:none;
         }
-    }
-
-    .warning-triangle{
-        color: #f00;
     }
 </style>
