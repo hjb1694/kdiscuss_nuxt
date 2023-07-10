@@ -36,7 +36,7 @@
                             </li>
                             <li>
                                 <Icon icon="fa fa-globe" />
-                                <p>Earn points. Redeem for REWARDS.</p>
+                                <p>Earn points. Redeem for REWARDS. (Personal Accounts Only)</p>
                             </li>
                             <li>
                                 <Icon icon="fa fa-globe" />
@@ -80,6 +80,25 @@
                         <ErrorBox v-if="registrationErrors.dob.length" :errors="registrationErrors.dob"/>
                     </div>
                     <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
+                        <h3>Next, select your account type: </h3>
+                        <div class="account-choices">
+                            <label class="account-type-selection">
+                            <input type="radio" v-model="selectedAcctType" value="personal" class="account-type-selection__cb" />
+                            <div class="account-type-selection__card">
+                                <Icon icon="fa fa-person-rays" />
+                                <div>Personal</div>
+                            </div>
+                            </label>
+                            <label class="account-type-selection">
+                                <input type="radio" v-model="selectedAcctType" value="professional" class="account-type-selection__cb" />
+                                <div class="account-type-selection__card">
+                                    <Icon icon="fa fa-briefcase" />
+                                    <div>Professional</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
                         <h3>Next, enter your email address.</h3>
                         <FormGroup>
                             <TextInput label="Email Address" v-model="enteredEmail" type="email"/>
@@ -89,7 +108,7 @@
                             <p>No worries, we will not sell your personal information, and we will remain light on the emails (We promise)!</p>
                         </div>
                     </div>
-                    <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
+                    <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
                         <h3>Next, create your account credentials.</h3>
                         <FormGroup>  
                             <TextInput label="Account Username" type="text" max-length="12" />
@@ -99,12 +118,6 @@
                         </FormGroup>
                         <FormGroup>
                             <TextInput label="Confirm Password" type="password" max-length="100"/>
-                        </FormGroup>
-                    </div>
-                    <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
-                        <h3>Now, let's create your personal persona. <em>(Almost done!)</em></h3>
-                        <FormGroup>
-                            <TextInput label="Personal Persona Username" type="text" max-length="12" />
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
@@ -125,6 +138,11 @@
                         </FormGroup>
                         <FormGroup>
                             <TextInput label="Password" type="password" />
+                        </FormGroup>
+                        <FormGroup>
+                            <span class="toggle-label">Personal</span>
+                            <toggle v-model="isProfessionalLogin" class="login-type-toggle"/>
+                            <span class="toggle-label">Professional</span>
                         </FormGroup>
                     </form>
                 </form>
@@ -183,6 +201,8 @@
     const enteredEmail = ref('');
     const agreeRules = ref(false);
     const agreeTos = ref(false);
+    const isProfessionalLogin = ref(false);
+    const selectedAcctType = ref();
 
     const months = [
         {
@@ -297,6 +317,9 @@
             return !!!registrationErrors.dob.length;
         }, 
         2: () => {
+            return true;
+        },
+        3: () => {
             registrationErrors.email = [] as string[];
             !validator.isEmail(enteredEmail.value) && registrationErrors.email.push('Please enter a valid email address.');
 
@@ -304,10 +327,10 @@
 
             return !!!registrationErrors.email.length;
         }, 
-        3: () => {
+        4: () => {
             return true;
         }, 
-        4: () => {
+        5: () => {
             return true;
         }
     }
@@ -418,6 +441,59 @@
         background:rgb(225, 225, 245);
         border:1px solid rgb(194, 194, 237);
         @include textBox;
+    }
+
+    .login-type-toggle {
+        --toggle-bg-off: #aaa;
+        --toggle-bg-on: #aaa;
+        --toggle-height:2rem;
+        --toggle-width:4rem;
+        --toggle-ring-color: transparent;
+        --toggle-border-on: #888;
+        --toggle-border-off: #888;
+    }
+
+    .toggle-label {
+        margin:0 1rem;
+        font-size:1.6rem;
+    }
+
+    .account-type-selection {
+        display:inline-block;
+        cursor:pointer;
+
+        &__card{
+            border:1px solid #aaa;
+            height:14rem;
+            padding:1.5rem;
+            border-radius:5px;
+            font-size:2.2rem;
+            @include flexCenter;
+            flex-direction:column;
+            margin:.5rem;
+
+            div{
+                margin-top:.8rem;
+            }
+        }
+
+        &__cb {
+            display:none;
+        }
+
+        &__cb:checked + .account-type-selection__card {
+            background: $lighter-orange;
+            border: $darker-orange;
+            color: $white;
+        }
+    }
+
+    .account-choices {
+        display:flex;
+        flex-wrap:wrap;
+        justify-content: center;
+        align-content: center;
+        margin:2rem 0;
     }
 
 </style>

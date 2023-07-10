@@ -5,9 +5,7 @@
             <header class="modal__header">
                 <slot name="modalheader"></slot>
                 <button class="modal__close-btn" @click="closeModal">
-                    <client-only>
-                        <font-awesome-icon icon="fa fa-times"></font-awesome-icon>
-                    </client-only>
+                    <Icon icon="fa fa-times" />
                 </button>
             </header>
             <section class="modal__body">

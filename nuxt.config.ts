@@ -13,7 +13,8 @@ export default defineNuxtConfig({
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css', 
     '@vueform/multiselect/themes/default.css', 
-    'animate.css/animate.min.css'
+    'animate.css/animate.min.css', 
+    '@vueform/toggle/themes/default.css'
   ], 
   modules: [
     '@nuxtjs/google-fonts', 
