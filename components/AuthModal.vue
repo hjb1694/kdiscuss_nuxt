@@ -287,6 +287,9 @@
 
     const closeAuthModal = () => {
         toggleAuthModal(false);
+        resetRegistrationForm();
+        formShowStates.login = false;
+        formShowStates.registration = true;
     }
 
     const currentRegStep = ref(0);
