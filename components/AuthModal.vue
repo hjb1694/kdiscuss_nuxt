@@ -89,8 +89,7 @@
                     <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
                         <h3>Next, enter your email address.</h3>
                         <FormGroup>
-                            <label class="label">Email Address</label>
-                            <input v-model="enteredEmail" type="email" class="text-input"/>
+                            <TextInput label="Email Address" v-model="enteredEmail" type="email"/>
                         </FormGroup>
                         <div v-if="registrationErrors.email.length" class="errbox">
                             <ul>
@@ -106,24 +105,20 @@
                     </div>
                     <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
                         <h3>Next, create your account credentials.</h3>
-                        <FormGroup>
-                            <label class="label">Account Name</label>
-                            <input type="text" class="text-input"/>
+                        <FormGroup>  
+                            <TextInput label="Account Username" type="text" />
                         </FormGroup>
                         <FormGroup>
-                            <label class="label">Password</label>
-                            <input type="password" class="text-input"/>
+                            <TextInput label="Password" type="password" />
                         </FormGroup>
                         <FormGroup>
-                            <label class="label">Confirm Password</label>
-                            <input type="password" class="text-input">
+                            <TextInput label="Confirm Password" type="password" />
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
                         <h3>Now, let's create your personal persona. <em>(Almost done!)</em></h3>
                         <FormGroup>
-                            <label class="label">Personal Persona Username</label>
-                            <input type="text" class="text-input">
+                            <TextInput label="Personal Persona Username" type="text" />
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
