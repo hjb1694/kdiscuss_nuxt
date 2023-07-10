@@ -290,6 +290,8 @@
         resetRegistrationForm();
         formShowStates.login = false;
         formShowStates.registration = true;
+        tabActiveStates.registration = true;
+        tabActiveStates.login = false;
     }
 
     const currentRegStep = ref(0);
