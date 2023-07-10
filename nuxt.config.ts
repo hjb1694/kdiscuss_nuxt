@@ -32,6 +32,7 @@ export default defineNuxtConfig({
   imports: {
     autoImport: true,
     dirs: [
+      'stores',
       'stores/**'
     ]
   }

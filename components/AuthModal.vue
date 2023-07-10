@@ -77,28 +77,14 @@
                             :searchable="true"
                             />
                         </FormGroup>
-                        <div v-if="registrationErrors.dob.length" class="errbox">
-                            <ul>
-                                <li v-for="err of registrationErrors.dob">
-                                    <Icon icon="fa fa-warning" color="#f00" />
-                                    {{ err }}
-                                </li>
-                            </ul>
-                        </div>
+                        <ErrorBox v-if="registrationErrors.dob.length" :errors="registrationErrors.dob"/>
                     </div>
                     <div v-show="registrationPartShowStates[2]" class="register-part register-part--2">
                         <h3>Next, enter your email address.</h3>
                         <FormGroup>
                             <TextInput label="Email Address" v-model="enteredEmail" type="email"/>
                         </FormGroup>
-                        <div v-if="registrationErrors.email.length" class="errbox">
-                            <ul>
-                                <li v-for="err of registrationErrors.email">
-                                    <Icon icon="fa fa-warning" color="#f00" />
-                                    {{ err }}
-                                </li>
-                            </ul>
-                        </div>
+                        <ErrorBox v-if="registrationErrors.email.length" :errors="registrationErrors.email"></ErrorBox>
                         <div class="info-box">
                             <p>No worries, we will not sell your personal information, and we will remain light on the emails (We promise)!</p>
                         </div>
@@ -106,19 +92,19 @@
                     <div v-show="registrationPartShowStates[3]" class="register-part register-part--3">
                         <h3>Next, create your account credentials.</h3>
                         <FormGroup>  
-                            <TextInput label="Account Username" type="text" />
+                            <TextInput label="Account Username" type="text" max-length="12" />
                         </FormGroup>
                         <FormGroup>
-                            <TextInput label="Password" type="password" />
+                            <TextInput label="Password" type="password" max-length="100"/>
                         </FormGroup>
                         <FormGroup>
-                            <TextInput label="Confirm Password" type="password" />
+                            <TextInput label="Confirm Password" type="password" max-length="100"/>
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
                         <h3>Now, let's create your personal persona. <em>(Almost done!)</em></h3>
                         <FormGroup>
-                            <TextInput label="Personal Persona Username" type="text" />
+                            <TextInput label="Personal Persona Username" type="text" max-length="12" />
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
@@ -155,7 +141,7 @@
 
 <script lang="ts" setup>
 
-    import { computed, reactive, ref } from  'vue';
+    import { computed, reactive, ref } from 'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
 
@@ -446,13 +432,4 @@
         @include textBox;
     }
 
-    .errbox {
-        background:rgb(255, 222, 222);
-        border:1px solid rgb(255, 163, 163);
-        @include textBox;
-
-        ul{
-            list-style:none;
-        }
-    }
 </style>
