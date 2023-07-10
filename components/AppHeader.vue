@@ -38,14 +38,18 @@
         font-family:inherit;
         font-size:1.3rem;
         padding:.5rem;
-        margin-right:1rem;
+        border-radius:0 0 0 5px;
         position:absolute;
-        right:1.5rem;
-        top:1.5rem;
+        right:0;
+        top:0;
         color: $white;
         cursor:pointer;
         text-transform: uppercase;
         box-shadow:0 0 .5rem rgba($black,.5);
+
+        span{
+            margin-left:.8rem;
+        }
     }
 
     @media (max-width: 600px) {

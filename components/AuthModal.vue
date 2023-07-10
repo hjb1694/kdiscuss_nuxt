@@ -132,7 +132,15 @@
                     </div>
                 </form>
                 <form v-if="formShowStates.login" class="login">
-                    
+                    <form>
+                        <h2>Sign In</h2>
+                        <FormGroup>
+                            <TextInput label="Email" type="email" />
+                        </FormGroup>
+                        <FormGroup>
+                            <TextInput label="Password" type="password" />
+                        </FormGroup>
+                    </form>
                 </form>
             </template>
             <template v-slot:modalfooter>
