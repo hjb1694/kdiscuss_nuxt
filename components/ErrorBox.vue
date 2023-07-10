@@ -1,5 +1,5 @@
 <template>
-    <div class="errbox">
+    <div class="errbox animate__animated animate__headShake">
         <ul>
             <li v-for="err of errors">
                 <Icon icon="fa fa-warning" color="#f00" />

@@ -1,7 +1,7 @@
 <template>
     <div class="modal">
         <div class="modal__backdrop" @click="closeModal"></div>
-        <div class="modal__dialog">
+        <div class="modal__dialog animate__animated animate__rollIn">
             <header class="modal__header">
                 <slot name="modalheader"></slot>
                 <button class="modal__close-btn" @click="closeModal">
@@ -49,7 +49,6 @@
             box-shadow:rgba($black,.7);
             border-radius:5px;
             background: $white;
-            animation: fadeSlideDown .3s forwards;
         }
 
         &__header, 
@@ -79,10 +78,5 @@
             align-items: center;
             justify-content: flex-end;
         }
-    }
-
-    @keyframes fadeSlideDown {
-        from{opacity:0; transform:translateY(-5rem)}
-        to{opacity:1; transform:translateY(0)}
     }
 </style>
