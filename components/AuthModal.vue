@@ -353,18 +353,6 @@
 
 <style lang="scss" scoped>
 
-    .select {
-        --ms-font-size:1.6rem;
-        --ms-option-font-size:1.6rem;
-        --ms-option-py: 1rem;
-        --ms-option-bg-selected: #fdd78e;
-        --ms-option-color-selected: #000;
-        --ms-option-bg-selected-pointed: #ffce96;
-        --ms-option-color-selected-pointed: #000;
-        --ms-border-color-active: #ffe4c4;
-        --ms-ring-color: #fdd78e50;
-        margin:1rem 0;
-    }
     .tabs {
         display:flex;
     }
