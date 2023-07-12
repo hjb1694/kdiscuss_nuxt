@@ -111,13 +111,13 @@
                     <div v-show="registrationPartShowStates[4]" class="register-part register-part--4">
                         <h3>Next, create your account credentials.</h3>
                         <FormGroup>  
-                            <TextInput label="Account Username" type="text" max-length="12" />
+                            <TextInput label="Account Username" v-model="enteredUsername" type="text" max-length="12" />
                         </FormGroup>
                         <FormGroup>
-                            <TextInput label="Password" type="password" max-length="100"/>
+                            <TextInput label="Password" v-model="enteredPassword" type="password" max-length="100"/>
                         </FormGroup>
                         <FormGroup>
-                            <TextInput label="Confirm Password" type="password" max-length="100"/>
+                            <TextInput label="Confirm Password" v-model="enteredConfirmPassword" type="password" max-length="100"/>
                         </FormGroup>
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
@@ -166,6 +166,7 @@
     const modalStore = useModalStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
     const toggleAuthModal = modalStore.toggleAuthModal;
+    const { isValidUsername } = useValidators();
 
     const today = DateTime.now();
 
@@ -199,6 +200,9 @@
     const selectedDay = ref();
     const selectedYear = ref();
     const enteredEmail = ref('');
+    const enteredUsername = ref('');
+    const enteredPassword = ref('');
+    const enteredConfirmPassword = ref('');
     const agreeRules = ref(false);
     const agreeTos = ref(false);
     const isProfessionalLogin = ref(false);
@@ -257,7 +261,8 @@
 
     const registrationErrors = reactive({
         dob: reactive([]) as string[], 
-        email: reactive([]) as string[]
+        email: reactive([]) as string[], 
+        creds: reactive([]) as string[]
     });
 
     const days = computed(() => {
@@ -328,6 +333,11 @@
             return !!!registrationErrors.email.length;
         }, 
         4: () => {
+
+            registrationErrors.creds = [] as string[];
+
+            !isValidUsername(enteredUsername.value) && registrationErrors.creds.push('Username must be between 6 and 12 characters and contain only alphanumeric characters with an optional underscore.');
+
             return true;
         }, 
         5: () => {
@@ -471,6 +481,7 @@
             @include flexCenter;
             flex-direction:column;
             margin:.5rem;
+            background:#fcfcfc;
 
             div{
                 margin-top:.8rem;
