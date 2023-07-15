@@ -324,11 +324,29 @@
         2: () => {
             return true;
         },
-        3: () => {
+        3: async () => {
             registrationErrors.email = [] as string[];
             !validator.isEmail(enteredEmail.value) && registrationErrors.email.push('Please enter a valid email address.');
 
             if(registrationErrors.email.length) return;
+
+            const { data } = await useFetch('/api/auth/exists/email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: {
+                    email_address: enteredEmail.value
+                },
+                onResponseError: ({error}) => {
+                    console.error(error);
+                    registrationErrors.email.push('An unexpected error has occurred.')
+                }
+            });
+
+            console.log('RESPONSE: ', data.value);
+            
 
             return !!!registrationErrors.email.length;
         }, 
@@ -337,6 +355,7 @@
             registrationErrors.creds = [] as string[];
 
             !isValidUsername(enteredUsername.value) && registrationErrors.creds.push('Username must be between 6 and 12 characters and contain only alphanumeric characters with an optional underscore.');
+
 
             return true;
         }, 

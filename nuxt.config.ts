@@ -37,5 +37,8 @@ export default defineNuxtConfig({
       'stores',
       'stores/**'
     ]
+  }, 
+  runtimeConfig: {
+    account_api_uri: process.env.ACCOUNT_API_URI
   }
 })
