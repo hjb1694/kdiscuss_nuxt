@@ -1,5 +1,5 @@
 import { createRouter, defineEventHandler, useBase, readBody } from 'h3';
-import { ResponseError } from '../utils/ResponseError';
+import { ResponseError } from '../../utils/ResponseError';
 
 const router = createRouter()
 const runtimeConfig = useRuntimeConfig();
