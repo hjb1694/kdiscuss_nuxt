@@ -162,6 +162,7 @@
     import { computed, reactive, ref } from 'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
+    import { FetchResult } from 'nuxt/app';
 
     const modalStore = useModalStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
@@ -330,23 +331,30 @@
 
             if(registrationErrors.email.length) return;
 
-            const { data } = await useFetch('/api/auth/exists/email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: {
-                    email_address: enteredEmail.value
-                },
-                onResponseError: ({error}) => {
-                    console.error(error);
-                    registrationErrors.email.push('An unexpected error has occurred.')
-                }
-            });
+            try{
 
-            console.log('RESPONSE: ', data.value);
-            
+                const data: any = await $fetch('/api/auth/exists/email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: {
+                        email_address: enteredEmail.value
+                    }
+                });   
+
+                console.log(data.doesExist.body);
+
+                if(data.doesExist.body){
+                    registrationErrors.email.push('This email address already exists.');
+                }
+
+            }catch(e){
+                console.error(e);
+                registrationErrors.email.push('An unexpected error has occurred.');
+            }
+        
 
             return !!!registrationErrors.email.length;
         }, 
@@ -364,8 +372,8 @@
         }
     }
 
-    const regNext = () => {
-        if(currentRegStep.value > 0 && !validation[currentRegStep.value]()) return;
+    const regAdvanceToNext = () => {
+
         currentRegStep.value++;
         showRegPart(currentRegStep.value);
         let button: string;
@@ -375,6 +383,26 @@
             button = 'regCompleteBtn';
         }
         showButton(button);
+
+    }
+
+    const regNext = () => {
+        if(currentRegStep.value > 0){
+            if(validation[currentRegStep.value][Symbol.toStringTag] === 'AsyncFunction'){
+                validation[currentRegStep.value]()
+                .then((val: boolean) => {
+                    if(val){
+                        regAdvanceToNext();
+                    }
+                })
+            }else{
+                const isValid = validation[currentRegStep.value]();
+                if(!isValid) return;
+                regAdvanceToNext();
+            }
+        }else{
+            regAdvanceToNext();
+        }
     }
 
     const toggleFormShowState = (form: string) => {

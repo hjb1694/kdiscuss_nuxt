@@ -4,6 +4,7 @@ import { ResponseError } from '../../utils/ResponseError';
 const router = createRouter()
 const runtimeConfig = useRuntimeConfig();
 const accountAPIUri = runtimeConfig.account_api_uri;
+const accountAPIKey = runtimeConfig.account_api_key;
 
 router.post('/exists/email', defineEventHandler(async event => {
 
@@ -11,36 +12,38 @@ router.post('/exists/email', defineEventHandler(async event => {
 
         console.log('BOOM!');
 
-        const queryParams = await readBody(event);
+        const body = await readBody(event);
 
-        // if(!queryParams['email_address']){
-        //     throw new ResponseError({
-        //         status_code: 422, 
-        //         short_msg: 'ERR_MISSING_INFO', 
-        //         body: {
-        //             message: 'Missing email.'
-        //         }
-        //     });
-        // }
+        if(!body['email_address']){
+            throw new ResponseError({
+                status_code: 422, 
+                short_msg: 'ERR_MISSING_INFO', 
+                body: {
+                    message: 'Missing email.'
+                }
+            });
+        }
 
-        // const { data } = await $fetch(`${accountAPIUri}/auth/exists/username`, {
-        //     query: {
-        //         email_address: queryParams['email_address']
-        //     }, 
-        //     onResponseError({error}) {
-        //         console.error(error);
-        //     },
-        // });
-
-        // console.log(data.value);
+        const data: any = await $fetch(`${accountAPIUri}/auth/exists/email`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+                'X-API-KEY': accountAPIKey
+            },
+            body: {
+                email_address: body['email_address']
+            }
+        });
 
         return {
-            data: 1234
+            doesExist: data
         };
 
     }catch(e) {
 
-        return ResponseError.respondWithError(e);
+        console.error(e);
+
+        ResponseError.respondWithError(e);
 
     }
 
