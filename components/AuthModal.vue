@@ -83,17 +83,17 @@
                         <h3>Next, select your account type: </h3>
                         <div class="account-choices">
                             <label class="account-type-selection">
-                            <input type="radio" v-model="selectedAcctType" value="personal" class="account-type-selection__cb" />
-                            <div class="account-type-selection__card">
-                                <Icon icon="fa fa-person-rays" />
-                                <div>Personal</div>
-                            </div>
+                                <input type="radio" v-model="selectedAcctType" value="REGULAR" class="account-type-selection__cb" />
+                                <div class="account-type-selection__card">
+                                    <Icon icon="fa fa-person-rays" />
+                                    <div>Regular</div>
+                                </div>
                             </label>
                             <label class="account-type-selection">
-                                <input type="radio" v-model="selectedAcctType" value="professional" class="account-type-selection__cb" />
+                                <input type="radio" v-model="selectedAcctType" value="BUSINESS" class="account-type-selection__cb" />
                                 <div class="account-type-selection__card">
                                     <Icon icon="fa fa-briefcase" />
-                                    <div>Professional</div>
+                                    <div>Business</div>
                                 </div>
                             </label>
                         </div>
@@ -162,7 +162,6 @@
     import { computed, reactive, ref } from 'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
-    import { FetchResult } from 'nuxt/app';
 
     const modalStore = useModalStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
