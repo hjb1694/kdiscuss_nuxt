@@ -10,8 +10,6 @@ router.post('/exists/email', defineEventHandler(async event => {
 
     try{
 
-        console.log('BOOM!');
-
         const body = await readBody(event);
 
         if(!body['email_address']){
@@ -28,6 +26,7 @@ router.post('/exists/email', defineEventHandler(async event => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 
+                'Accept': 'application/json',
                 'X-API-KEY': accountAPIKey
             },
             body: {
@@ -43,10 +42,45 @@ router.post('/exists/email', defineEventHandler(async event => {
 
         console.error(e);
 
-        ResponseError.respondWithError(e);
+        return ResponseError.respondWithError(e);
 
     }
 
 }));
+
+
+router.post('/exists/username', defineEventHandler(async event => {
+
+    const body = await readBody(event);
+
+    try{
+
+        const data = await $fetch(`${accountAPIUri}/auth/exists/account_name`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'X-API-KEY': accountAPIKey
+            }, 
+            body: {
+                account_name: body['username']
+            }
+        });
+
+        return {
+            doesExist: data
+        }
+
+    }catch(e){
+
+        console.error(e);
+
+        return ResponseError.respondWithError(e);
+
+    }
+
+
+}));
+
 
 export default useBase('/api/auth', router.handler);

@@ -103,7 +103,7 @@
                         <FormGroup>
                             <TextInput label="Email Address" v-model="enteredEmail" type="email"/>
                         </FormGroup>
-                        <ErrorBox v-if="registrationErrors.email.length" :errors="registrationErrors.email"></ErrorBox>
+                        <ErrorBox v-if="registrationErrors.email.length" :errors="registrationErrors.email" />
                         <div class="info-box">
                             <p>No worries, we will not sell your personal information, and we will remain light on the emails (We promise)!</p>
                         </div>
@@ -119,6 +119,7 @@
                         <FormGroup>
                             <TextInput label="Confirm Password" v-model="enteredConfirmPassword" type="password" max-length="100"/>
                         </FormGroup>
+                        <ErrorBox v-if="registrationErrors.creds.length" :errors="registrationErrors.creds" />
                     </div>
                     <div v-show="registrationPartShowStates[5]" class="register-part register-part--5">
                         <h3>Lastly, please agree to the following:</h3>
@@ -166,7 +167,7 @@
     const modalStore = useModalStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
     const toggleAuthModal = modalStore.toggleAuthModal;
-    const { isValidUsername } = useValidators();
+    const { isValidUsername, isValidNewPassword } = useValidators();
 
     const today = DateTime.now();
 
@@ -328,7 +329,7 @@
             registrationErrors.email = [] as string[];
             !validator.isEmail(enteredEmail.value) && registrationErrors.email.push('Please enter a valid email address.');
 
-            if(registrationErrors.email.length) return;
+            if(registrationErrors.email.length) return false;
 
             try{
 
@@ -357,14 +358,40 @@
 
             return !!!registrationErrors.email.length;
         }, 
-        4: () => {
+        4: async () => {
 
             registrationErrors.creds = [] as string[];
 
-            !isValidUsername(enteredUsername.value) && registrationErrors.creds.push('Username must be between 6 and 12 characters and contain only alphanumeric characters with an optional underscore.');
+            !isValidUsername(enteredUsername.value) && registrationErrors.creds.push('Username must be between 6 and 12 alphanumeric characters with an optional underscore.');
+            !isValidNewPassword(enteredPassword.value) && registrationErrors.creds.push('Password must be between 8 and 100 characters and contain at least one (1) uppercase letter, one (1) lowercase letter, and one(1) number.');
+            (enteredPassword.value !== enteredConfirmPassword.value) && registrationErrors.creds.push('Confirm password does not match.');
+
+            if(registrationErrors.creds.length) return false;
+
+            try{
+
+                const data: any = await $fetch('/api/auth/exists/username', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: {
+                        email_address: enteredEmail.value
+                    }
+                });
+
+                console.log(data);
+
+            }catch(e){
+                console.error(e);
+                registrationErrors.creds.push('An unexpected error has occurred.');
+            }
 
 
-            return true;
+
+
+            return !!!registrationErrors.creds.length;
         }, 
         5: () => {
             return true;
@@ -422,6 +449,10 @@
         selectedMonth.value = null;
         selectedDay.value = null;
         selectedYear.value = null;
+        enteredEmail.value = '';
+        enteredUsername.value = '';
+        enteredPassword.value = '';
+        enteredConfirmPassword.value = '';
         agreeRules.value = false;
         agreeTos.value = false
         registrationErrors.dob = [];

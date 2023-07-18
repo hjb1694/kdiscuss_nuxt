@@ -13,9 +13,29 @@ export const useValidators = () => {
 
     }
 
+    const isValidNewPassword = (password: string) => {
+
+        const regs = {
+            uppercase: /[A-Z]/, 
+            lowercase: /[a-z]/, 
+            numeric: /[0-9]/
+        };
+
+        return (
+            regs.uppercase.test(password) &&
+            regs.lowercase.test(password) &&
+            regs.numeric.test(password) &&
+            stringLength(password) > 8 && 
+            stringLength(password) <= 100
+        );
+
+
+    }
+
 
     return {
-        isValidUsername
+        isValidUsername, 
+        isValidNewPassword
     }
 
 
