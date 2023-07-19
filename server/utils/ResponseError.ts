@@ -33,7 +33,7 @@ export class ResponseError extends Error implements ResponseErrorObject {
             }
         }
 
-        throw createError(err);
+        throw err;
 
     }
 

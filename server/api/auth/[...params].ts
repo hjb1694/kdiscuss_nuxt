@@ -83,4 +83,27 @@ router.post('/exists/username', defineEventHandler(async event => {
 }));
 
 
+router.post(`${accountAPIUri}/auth/register`, defineEventHandler(async event => {
+
+    const body = readBody(event);
+
+    try{
+
+        const data = await $fetch(`${accountAPIUri}/auth/register`, {
+            
+        });
+
+
+    }catch(e){
+
+        console.error(e);
+
+        return ResponseError.respondWithError(e);
+
+    }
+
+
+}));
+
+
 export default useBase('/api/auth', router.handler);

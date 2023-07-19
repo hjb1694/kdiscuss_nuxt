@@ -36,7 +36,7 @@
                             </li>
                             <li>
                                 <Icon icon="fa fa-globe" />
-                                <p>Earn points. Redeem for REWARDS. (Personal Accounts Only)</p>
+                                <p>Earn points. Redeem for REWARDS. (Regular Accounts Only)</p>
                             </li>
                             <li>
                                 <Icon icon="fa fa-globe" />
@@ -463,9 +463,33 @@
         if(!validation[5]()) return;
 
         processing.regCompletion = true;
+        registrationErrors.agreements = [];
 
-        try{}
-        catch(e){}
+        try{
+
+            await $fetch('/api/auth/register', {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                }, 
+                body: {
+                    account_type: selectedAcctType.value, 
+                    dob: `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
+                    account_name: enteredUsername.value, 
+                    email: enteredEmail.value, 
+                    password: enteredPassword.value
+                }
+            });
+
+            resetRegistrationForm();
+            toggleAuthModal(false);
+
+        }
+        catch(e){
+            console.error(e);
+            registrationErrors.agreements.push('An unexpected error has occurred.');
+        }
         finally{
             processing.regCompletion = false;
         }
