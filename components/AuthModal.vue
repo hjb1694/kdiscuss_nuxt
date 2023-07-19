@@ -129,6 +129,7 @@
                         <FormGroup>
                             <Checkbox v-model="agreeTos" label="I agree to the Terms of Service."/>
                         </FormGroup>
+                        <ErrorBox v-if="registrationErrors.agreements.length" :errors="registrationErrors.agreements" />
                     </div>
                 </form>
                 <form v-if="formShowStates.login" class="login">
@@ -151,7 +152,19 @@
             <template v-slot:modalfooter>
                 <ButtonPrimary v-if="formButtonShowStates.regContinueBtn" type="button" @click="regNext">Continue</ButtonPrimary>
                 <ButtonPrimary v-if="formButtonShowStates.regNextBtn" type="button" @click="regNext">Next</ButtonPrimary>
-                <ButtonPrimary v-if="formButtonShowStates.regCompleteBtn" type="submit" form="registration">Complete Registration</ButtonPrimary>
+                <ButtonPrimary 
+                v-if="formButtonShowStates.regCompleteBtn" 
+                @click="regSubmit" 
+                type="submit" 
+                form="registration"
+                :disabled="processing.regCompletion"
+                >
+                    <span v-if="!processing.regCompletion">Complete Registration</span>
+                    <div class="loading" v-else>
+                        <img src="@/assets/double_spinner.svg" alt="Loading..." class="btn-spinner"/>
+                        <span>Please wait...</span>
+                    </div>
+                </ButtonPrimary>
                 <ButtonPrimary v-if="formButtonShowStates.loginBtn" type="submit">Login</ButtonPrimary>
             </template>
         </Modal>
@@ -195,6 +208,10 @@
         3: false, 
         4: false, 
         5: false
+    });
+
+    const processing = reactive({
+        regCompletion: false
     });
 
     const selectedMonth = ref();
@@ -263,7 +280,8 @@
     const registrationErrors = reactive({
         dob: reactive([]) as string[], 
         email: reactive([]) as string[], 
-        creds: reactive([]) as string[]
+        creds: reactive([]) as string[], 
+        agreements: reactive([]) as string[]
     });
 
     const days = computed(() => {
@@ -307,6 +325,8 @@
     }
 
     const currentRegStep = ref(0);
+
+    // ========== REGISTRATION VALIDATIONS =============
 
     const validation = {
         1: () => {
@@ -377,11 +397,13 @@
                         'Accept': 'application/json'
                     },
                     body: {
-                        email_address: enteredEmail.value
+                        account_name: enteredUsername.value
                     }
                 });
 
-                console.log(data);
+                if(data.doesExist.body){
+                    registrationErrors.creds.push('This username already exists!');
+                }
 
             }catch(e){
                 console.error(e);
@@ -394,7 +416,12 @@
             return !!!registrationErrors.creds.length;
         }, 
         5: () => {
-            return true;
+
+            registrationErrors.agreements = [];
+
+            (!agreeTos.value || !agreeRules.value) && registrationErrors.agreements.push('You must agree to the above to complete registration.');
+
+            return !!!registrationErrors.agreements.length;
         }
     }
 
@@ -429,6 +456,20 @@
         }else{
             regAdvanceToNext();
         }
+    }
+
+    const regSubmit = async () => {
+
+        if(!validation[5]()) return;
+
+        processing.regCompletion = true;
+
+        try{}
+        catch(e){}
+        finally{
+            processing.regCompletion = false;
+        }
+
     }
 
     const toggleFormShowState = (form: string) => {
@@ -582,6 +623,19 @@
         justify-content: center;
         align-content: center;
         margin:2rem 0;
+    }
+
+    .loading {
+        display: flex;
+        align-items: center;
+
+        span {
+            margin-left:.8rem;
+        }
+    }
+
+    .btn-spinner {
+        width:3rem;
     }
 
 </style>
