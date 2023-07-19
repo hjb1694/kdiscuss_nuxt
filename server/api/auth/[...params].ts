@@ -85,12 +85,24 @@ router.post('/exists/username', defineEventHandler(async event => {
 
 router.post(`${accountAPIUri}/auth/register`, defineEventHandler(async event => {
 
-    const body = readBody(event);
+    const body = await readBody(event);
 
     try{
 
         const data = await $fetch(`${accountAPIUri}/auth/register`, {
-            
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'X-API-KEY': accountAPIKey
+            }, 
+            body: {
+                account_type: body['account_type'], 
+                account_name: body['account_name'], 
+                dob: body['dob'], 
+                email: body['email'], 
+                password: body['password']
+            }
         });
 
 
