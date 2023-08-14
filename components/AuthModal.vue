@@ -22,7 +22,7 @@
                 </div>
             </template>
             <template v-slot:modalbody>
-                <form v-if="formShowStates.registration" class="registration">
+                <form v-if="formShowStates.registration" class="registration" id="registration">
                     <div v-show="registrationPartShowStates[0]" class="register-part register-part--intro">
                         <h2>Create an Account</h2>
                         <ul class="benefits-list">
@@ -132,21 +132,20 @@
                         <ErrorBox v-if="registrationErrors.agreements.length" :errors="registrationErrors.agreements" />
                     </div>
                 </form>
-                <form v-if="formShowStates.login" class="login">
-                    <form>
-                        <h2>Sign In</h2>
-                        <FormGroup>
-                            <TextInput label="Email" type="email" />
-                        </FormGroup>
-                        <FormGroup>
-                            <TextInput label="Password" type="password" />
-                        </FormGroup>
-                        <FormGroup>
-                            <span class="toggle-label">Personal</span>
-                            <toggle v-model="isProfessionalLogin" class="login-type-toggle"/>
-                            <span class="toggle-label">Professional</span>
-                        </FormGroup>
-                    </form>
+                <form v-if="formShowStates.login" class="login" id="login">
+                    <h2>Sign In</h2>
+                    <FormGroup>
+                        <TextInput label="Email" v-model="enteredLoginEmail" type="email" />
+                    </FormGroup>
+                    <FormGroup>
+                        <TextInput label="Password" v-model="enteredLoginPassword" type="password" />
+                    </FormGroup>
+                    <FormGroup>
+                        <span class="toggle-label">Personal</span>
+                        <toggle v-model="isProfessionalLogin" class="login-type-toggle"/>
+                        <span class="toggle-label">Professional</span>
+                    </FormGroup>
+                    <ErrorBox v-if="loginErrors.length" :errors="loginErrors"/>
                 </form>
             </template>
             <template v-slot:modalfooter>
@@ -165,7 +164,19 @@
                         <span>Please wait...</span>
                     </div>
                 </ButtonPrimary>
-                <ButtonPrimary v-if="formButtonShowStates.loginBtn" type="submit">Login</ButtonPrimary>
+                <ButtonPrimary 
+                v-if="formButtonShowStates.loginBtn"
+                @click="loginSubmit"
+                form="login"
+                type="submit"
+                :disabled="processing.login"
+                >
+                    <span v-if="!processing.login">Login</span>
+                    <div class="loading" v-else>
+                        <img src="@/assets/double_spinner.svg" alt="Loading..." class="btn-spinner"/>
+                        <span>Please wait...</span>
+                    </div>
+                </ButtonPrimary>
             </template>
         </Modal>
     </div>
@@ -213,7 +224,8 @@
     });
 
     const processing = reactive({
-        regCompletion: false
+        regCompletion: false, 
+        login: false
     });
 
     const selectedMonth = ref();
@@ -227,6 +239,8 @@
     const agreeTos = ref(false);
     const isProfessionalLogin = ref(false);
     const selectedAcctType = ref();
+    const enteredLoginEmail = ref('');
+    const enteredLoginPassword = ref('');
 
     const months = [
         {
@@ -285,6 +299,8 @@
         creds: reactive([]) as string[], 
         agreements: reactive([]) as string[]
     });
+
+    const loginErrors = reactive<string[]>([]);
 
     const days = computed(() => {
         let d: number[] = [];
@@ -427,6 +443,21 @@
         }
     }
 
+    // ============== LOGIN VALIDATION ================
+
+    const validateLogin = () => {
+
+        loginErrors.splice(0,);
+
+        !validator.isEmail(enteredEmail.value) && loginErrors.push('Please enter a valid email.');
+        (stringLength(enteredLoginPassword.value) < 1) && loginErrors.push('Please enter your password.');
+
+        return !!!loginErrors.length;
+
+    }
+
+
+
     const regAdvanceToNext = () => {
 
         currentRegStep.value++;
@@ -469,21 +500,6 @@
 
         try{
 
-            // await $fetch('/api/auth/register', {
-            //     method: 'POST', 
-            //     headers: {
-            //         'Content-Type': 'application/json', 
-            //         'Accept': 'application/json'
-            //     }, 
-            //     body: {
-            //         account_type: selectedAcctType.value, 
-            //         dob: `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
-            //         account_name: enteredUsername.value, 
-            //         email: enteredEmail.value, 
-            //         password: enteredPassword.value
-            //     }
-            // });
-
             await register(
                 selectedAcctType.value, 
                 `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
@@ -503,6 +519,15 @@
         finally{
             processing.regCompletion = false;
         }
+
+    }
+
+
+    const loginSubmit = async () => {
+
+        if(!validateLogin()) return;
+
+
 
     }
 
