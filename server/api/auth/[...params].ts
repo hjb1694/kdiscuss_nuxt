@@ -101,9 +101,13 @@ router.post(`/register`, defineEventHandler(async event => {
             body
         });
 
-        console.log(data);
+        console.log(data.body.user_id);
 
-        return true;
+        return {
+            registration_success: true, 
+            user_id: data.body.user_id, 
+            account_name: data.body.account_name
+        };
 
 
     }catch(e: any){
