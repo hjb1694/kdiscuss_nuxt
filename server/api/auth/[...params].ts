@@ -1,5 +1,6 @@
 import { createRouter, defineEventHandler, useBase, readBody } from 'h3';
 import { ResponseError } from '../../utils/ResponseError';
+import getToken from '../../utils/get_token';
 
 const router = createRouter()
 const runtimeConfig = useRuntimeConfig();
@@ -101,10 +102,15 @@ router.post(`/register`, defineEventHandler(async event => {
             body
         });
 
-        console.log(data.body.user_id);
+        const token = getToken(+data.body.user_id);
+
+        setCookie(event, 'Authorization', token, {
+            sameSite: true, 
+            httpOnly: true
+        });
 
         return {
-            registration_success: true, 
+            is_success: true, 
             user_id: data.body.user_id, 
             account_name: data.body.account_name
         };
@@ -112,7 +118,7 @@ router.post(`/register`, defineEventHandler(async event => {
 
     }catch(e: any){
 
-        console.error(e.data);
+        console.error(e);
 
         return ResponseError.respondWithError(e);
 

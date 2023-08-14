@@ -181,6 +181,8 @@
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
     const toggleAuthModal = modalStore.toggleAuthModal;
     const { isValidUsername, isValidNewPassword } = useValidators();
+    const { $auth } = useNuxtApp();
+    const { register } = $auth;
 
     const today = DateTime.now();
 
@@ -467,20 +469,28 @@
 
         try{
 
-            await $fetch('/api/auth/register', {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json', 
-                    'Accept': 'application/json'
-                }, 
-                body: {
-                    account_type: selectedAcctType.value, 
-                    dob: `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
-                    account_name: enteredUsername.value, 
-                    email: enteredEmail.value, 
-                    password: enteredPassword.value
-                }
-            });
+            // await $fetch('/api/auth/register', {
+            //     method: 'POST', 
+            //     headers: {
+            //         'Content-Type': 'application/json', 
+            //         'Accept': 'application/json'
+            //     }, 
+            //     body: {
+            //         account_type: selectedAcctType.value, 
+            //         dob: `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
+            //         account_name: enteredUsername.value, 
+            //         email: enteredEmail.value, 
+            //         password: enteredPassword.value
+            //     }
+            // });
+
+            await register(
+                selectedAcctType.value, 
+                `${selectedYear.value}-${selectedMonth.value}-${selectedDay.value}`, 
+                enteredUsername.value, 
+                enteredEmail.value, 
+                enteredPassword.value
+            );
 
             resetRegistrationForm();
             toggleAuthModal(false);

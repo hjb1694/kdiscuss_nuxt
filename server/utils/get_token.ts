@@ -1,6 +1,6 @@
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
-const getToken = async (userId: number) => {
+const getToken = (userId: number) => {
 
     const config = useRuntimeConfig();
 
