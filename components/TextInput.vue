@@ -38,7 +38,7 @@
 
     const emit = defineEmits(['update:modelValue']);
 
-    const updateValue = (evt) => {
+    const updateValue = (evt: any) => {
         emit('update:modelValue', evt.target.value);
     }
 

@@ -91,7 +91,7 @@ router.post(`/register`, defineEventHandler(async event => {
 
         console.log(body);
 
-        const data = await $fetch(`${accountAPIUri}/auth/register`, {
+        const data: any = await $fetch(`${accountAPIUri}/auth/register`, {
             method: 'POST', 
             headers: {
                 'Content-Type': 'application/json', 
