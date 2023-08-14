@@ -3,6 +3,31 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     let isLoggedIn = useState<boolean>('isLoggedIn', () => false);
     let accountName = useState<string | null>('accountName', () => null);
 
+    const login = async (email: string, password: string) => {
+
+        try{
+
+            const data: any = await $fetch('/api/auth/login', 
+            {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json'
+                }, 
+                body: {
+                    email, 
+                    password
+                }
+            });
+
+            console.log(data);
+
+        }catch(e){
+            throw e;
+        }
+
+    }
+
     const register = async (account_type: string, dob: string, account_name: string, email: string, password: string) => {
 
         try{

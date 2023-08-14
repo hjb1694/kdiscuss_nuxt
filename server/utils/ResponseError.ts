@@ -1,4 +1,4 @@
-import { H3Error, createError } from 'h3';
+import { H3Error } from 'h3';
 
 interface ResponseErrorObject {
     short_msg: string;

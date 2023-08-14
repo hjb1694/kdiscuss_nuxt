@@ -90,8 +90,6 @@ router.post(`/register`, defineEventHandler(async event => {
 
     try{
 
-        console.log(body);
-
         const data: any = await $fetch(`${accountAPIUri}/auth/register`, {
             method: 'POST', 
             headers: {
@@ -114,6 +112,41 @@ router.post(`/register`, defineEventHandler(async event => {
             user_id: data.body.user_id, 
             account_name: data.body.account_name
         };
+
+
+    }catch(e: any){
+
+        console.error(e);
+
+        return ResponseError.respondWithError(e);
+
+    }
+
+
+}));
+
+router.post(`${accountAPIUri}/auth/login`, defineEventHandler(async (event) => {
+
+    const body = await readBody(event);
+
+    try{
+
+        const data: any = await $fetch(`${accountAPIUri}/auth/login`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'X-API-KEY': accountAPIKey
+            }, 
+            body
+        });
+
+        const token = getToken(+data.body.user_id);
+
+        setCookie(event, 'Authorization', token, {
+            sameSite: true, 
+            httpOnly: true
+        });
 
 
     }catch(e: any){
