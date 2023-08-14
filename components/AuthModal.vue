@@ -22,7 +22,7 @@
                 </div>
             </template>
             <template v-slot:modalbody>
-                <form v-if="formShowStates.registration" class="registration" id="registration">
+                <form v-if="formShowStates.registration" class="registration" id="registration" @submit.prevent>
                     <div v-show="registrationPartShowStates[0]" class="register-part register-part--intro">
                         <h2>Create an Account</h2>
                         <ul class="benefits-list">
@@ -132,7 +132,7 @@
                         <ErrorBox v-if="registrationErrors.agreements.length" :errors="registrationErrors.agreements" />
                     </div>
                 </form>
-                <form v-if="formShowStates.login" class="login" id="login">
+                <form v-if="formShowStates.login" class="login" id="login" @submit.prevent>
                     <h2>Sign In</h2>
                     <FormGroup>
                         <TextInput label="Email" v-model="enteredLoginEmail" type="email" />
@@ -535,10 +535,24 @@
         formShowStates.login = false;
         formShowStates.registration = false;
         resetRegistrationForm();
+        resetLoginForm();
         formShowStates[form] = true;
         tabActiveStates.login = false;
         tabActiveStates.registration = false;
         tabActiveStates[form] = true;
+
+        if(form === 'login'){
+            for(let key in formButtonShowStates){
+                formButtonShowStates[key] = false;
+            }
+            formButtonShowStates.loginBtn = true;
+        }
+    }
+
+    const resetLoginForm = () => {
+        enteredLoginEmail.value = '';
+        enteredLoginPassword.value = '';
+        loginErrors.splice(0,);
     }
 
 
