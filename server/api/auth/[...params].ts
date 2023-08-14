@@ -101,6 +101,8 @@ router.post(`/register`, defineEventHandler(async event => {
             body
         });
 
+        console.log(data);
+
         return true;
 
 

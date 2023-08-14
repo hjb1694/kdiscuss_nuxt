@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   }, 
   runtimeConfig: {
     account_api_uri: process.env.ACCOUNT_API_URI, 
-    account_api_key: process.env.ACCOUNT_API_KEY
+    account_api_key: process.env.ACCOUNT_API_KEY, 
+    jwt_secret: process.env.JWT_SECRET
   }
 })
