@@ -64,7 +64,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
             auth: {
                 isLoggedIn, 
                 accountName, 
-                register
+                register, 
+                login
             }
         }
     }

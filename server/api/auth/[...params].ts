@@ -125,12 +125,13 @@ router.post(`/register`, defineEventHandler(async event => {
 
 }));
 
-router.post(`${accountAPIUri}/auth/login`, defineEventHandler(async (event) => {
+router.post(`/login`, defineEventHandler(async (event) => {
 
     const body = await readBody(event);
 
     try{
 
+      
         const data: any = await $fetch(`${accountAPIUri}/auth/login`, {
             method: 'POST', 
             headers: {
@@ -151,9 +152,19 @@ router.post(`${accountAPIUri}/auth/login`, defineEventHandler(async (event) => {
 
     }catch(e: any){
 
-        console.error(e);
+        let error = e;
 
-        return ResponseError.respondWithError(e);
+        if(error.status === 401){
+            error = new ResponseError({
+                short_msg: 'ERR_UNAUTHORIZED', 
+                status_code: 401, 
+                body: {
+                    message: 'The credentials entered are invalid or the account no longer exists.'
+                }
+            })
+        }
+
+        return ResponseError.respondWithError(error);
 
     }
 

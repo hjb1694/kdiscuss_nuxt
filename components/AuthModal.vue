@@ -193,7 +193,7 @@
     const toggleAuthModal = modalStore.toggleAuthModal;
     const { isValidUsername, isValidNewPassword } = useValidators();
     const { $auth } = useNuxtApp();
-    const { register } = $auth;
+    const { register, login } = $auth;
 
     const today = DateTime.now();
 
@@ -449,7 +449,7 @@
 
         loginErrors.splice(0,);
 
-        !validator.isEmail(enteredEmail.value) && loginErrors.push('Please enter a valid email.');
+        !validator.isEmail(enteredLoginEmail.value) && loginErrors.push('Please enter a valid email.');
         (stringLength(enteredLoginPassword.value) < 1) && loginErrors.push('Please enter your password.');
 
         return !!!loginErrors.length;
@@ -526,6 +526,23 @@
     const loginSubmit = async () => {
 
         if(!validateLogin()) return;
+
+        processing.login = true;
+        loginErrors.splice(0,);
+
+        try{
+
+            await login(enteredLoginEmail.value, enteredLoginPassword.value);
+
+        }catch(e: any){
+            if(e.data.statusCode === 401){
+                loginErrors.push('The credentials entered are either invalid or the account no longer exists.');
+            }else{
+                loginErrors.push('There was an error processing your request.');
+            }
+        }finally{
+            processing.login = false;
+        }
 
 
 
