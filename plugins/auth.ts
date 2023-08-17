@@ -3,6 +3,22 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     let isLoggedIn = useState<boolean>('isLoggedIn', () => false);
     let accountName = useState<string | null>('accountName', () => null);
 
+    if(process.server){
+
+        try{
+            const authData: any = await $fetch('/api/auth/user-info', {
+                headers: useRequestHeaders(['cookie'])
+            });
+
+            if(authData && authData.account_name){
+                isLoggedIn.value = true;
+                accountName.value = authData.account_name;
+            }
+        }
+        catch(e){}
+
+    }
+
     const login = async (email: string, password: string) => {
 
         try{

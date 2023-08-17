@@ -1,6 +1,7 @@
-import { createRouter, defineEventHandler, useBase, readBody } from 'h3';
+import { createRouter, defineEventHandler, useBase, readBody, parseCookies } from 'h3';
 import { ResponseError } from '../../utils/ResponseError';
 import getToken from '../../utils/get_token';
+import evalToken from '../../utils/eval_token';
 
 const router = createRouter()
 const runtimeConfig = useRuntimeConfig();
@@ -176,6 +177,33 @@ router.post(`/login`, defineEventHandler(async (event) => {
 
 
 }));
+
+
+router.get('/user-info', defineEventHandler((event) => {
+
+    try{
+
+        const config = useRuntimeConfig();
+        const cookies = parseCookies(event);
+
+        if(!cookies['Authorization']){
+            return false;
+        }
+
+        const authData = evalToken(cookies['Authorization'], config.jwt_secret);
+
+        return {
+            account_name: authData.account_name, 
+            user_id: authData.user_id
+        }
+
+    }catch(e){
+        return ResponseError.respondWithError(e);
+    }
+
+
+
+}))
 
 
 export default useBase('/api/auth', router.handler);
