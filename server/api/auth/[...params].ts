@@ -100,7 +100,7 @@ router.post(`/register`, defineEventHandler(async event => {
             body
         });
 
-        const token = getToken(+data.body.user_id);
+        const token = getToken(+data.body.user_id, data.body.account_name);
 
         setCookie(event, 'Authorization', token, {
             sameSite: true, 
@@ -142,12 +142,18 @@ router.post(`/login`, defineEventHandler(async (event) => {
             body
         });
 
-        const token = getToken(+data.body.user_id);
+        const token = getToken(+data.body.user_id, data.body.account_name);
 
         setCookie(event, 'Authorization', token, {
             sameSite: true, 
             httpOnly: true
         });
+
+        return {
+            is_success: true, 
+            user_id: +data.body.user_id, 
+            account_name: data.body.account_name
+        }
 
 
     }catch(e: any){

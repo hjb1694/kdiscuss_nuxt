@@ -534,6 +534,10 @@
 
             await login(enteredLoginEmail.value, enteredLoginPassword.value);
 
+            resetLoginForm();
+
+            toggleAuthModal(false);
+
         }catch(e: any){
             if(e.data.statusCode === 401){
                 loginErrors.push('The credentials entered are either invalid or the account no longer exists.');

@@ -20,9 +20,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
                 }
             });
 
-            console.log(data);
+            isLoggedIn.value = true;
+            accountName.value = data.account_name;
 
         }catch(e){
+            console.error(e);
             throw e;
         }
 
