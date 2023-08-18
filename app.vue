@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FlashNotif v-if="isFlashMessageOpen" :message-type="flashMessageType" :message="flashMessageContent" :onhide="onFlashMessageHide" />
+    <FlashNotif v-if="isFlashMessageOpen" :message-type="flashMessageType" :message="flashMessageContent" @flashhide="onFlashMessageHide" />
     <NuxtLayout>
       hi
     </NuxtLayout>

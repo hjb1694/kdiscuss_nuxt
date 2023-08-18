@@ -19,7 +19,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['onhide']);
+const emits = defineEmits(['flashhide']);
 
 const bgColor = computed(() => {
     if(props.messageType === FlashMessageType.SUCCESS){
@@ -29,10 +29,14 @@ const bgColor = computed(() => {
     }
 });
 
+const hideFlashMessage = () => {
+    emits('flashhide');
+}
+
 onMounted(() => {
     setTimeout(() => {
-        emit('onhide');
-    }, 4000);
+        hideFlashMessage();
+    }, 3000);
 });
 
 
@@ -51,6 +55,7 @@ onMounted(() => {
         align-items: center;
         color: $white;
         z-index:1000;
+        font-size:1.4rem;
     }
 
 </style>
