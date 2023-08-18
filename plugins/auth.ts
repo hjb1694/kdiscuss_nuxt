@@ -76,6 +76,23 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         
     }
 
+    const logout = async () => {
+
+        try{
+
+            await $fetch('/api/auth/logout', {
+                method: 'POST'
+            });
+
+        }catch(e){
+            console.error(e);
+        }
+
+        isLoggedIn.value = false;
+        accountName.value = null;
+
+    }
+
 
     return {
         provide: {
@@ -83,7 +100,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
                 isLoggedIn, 
                 accountName, 
                 register, 
-                login
+                login, 
+                logout
             }
         }
     }

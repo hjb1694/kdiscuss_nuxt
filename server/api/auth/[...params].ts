@@ -1,4 +1,4 @@
-import { createRouter, defineEventHandler, useBase, readBody, parseCookies } from 'h3';
+import { createRouter, defineEventHandler, useBase, readBody, parseCookies, deleteCookie } from 'h3';
 import { ResponseError } from '../../utils/ResponseError';
 import getToken from '../../utils/get_token';
 import evalToken from '../../utils/eval_token';
@@ -203,7 +203,17 @@ router.get('/user-info', defineEventHandler((event) => {
 
 
 
-}))
+}));
+
+router.post('/logout', defineEventHandler((event) => {
+
+    deleteCookie(event, 'Authorization');
+
+    return {
+        is_success: true
+    }
+
+}));
 
 
 export default useBase('/api/auth', router.handler);

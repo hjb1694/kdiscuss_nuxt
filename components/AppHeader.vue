@@ -15,7 +15,7 @@
                     <button class="auth-dropdown__item">
                         My Profile
                     </button>
-                    <button class="auth-dropdown__item">
+                    <button class="auth-dropdown__item" @click="logout">
                         Logout
                     </button>
                 </div>
@@ -31,7 +31,7 @@
     
     const { toggleAuthModal } = useModalStore();
     const { $auth } = useNuxtApp();
-    const { isLoggedIn, accountName } = $auth;
+    const { isLoggedIn, accountName, logout } = $auth;
 
     const authDropdownIsShown = ref<boolean>(false);
 
