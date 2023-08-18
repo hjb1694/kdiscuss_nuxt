@@ -187,8 +187,11 @@
     import { computed, reactive, ref } from 'vue';
     import { DateTime } from 'luxon';
     import validator from 'validator';
+    import { useFlashMessageStore } from '@/stores/flash_messages';
+    import { FlashMessageType } from '@/types';
 
     const modalStore = useModalStore();
+    const flashMessageStore = useFlashMessageStore();
     const authModalIsOpen = computed(() => modalStore.authModalIsOpen);
     const toggleAuthModal = modalStore.toggleAuthModal;
     const { isValidUsername, isValidNewPassword } = useValidators();
@@ -537,6 +540,8 @@
             resetLoginForm();
 
             toggleAuthModal(false);
+
+            flashMessageStore.showFlashMessage(FlashMessageType.SUCCESS, 'You are successfully logged in!');
 
         }catch(e: any){
             if(e.data.statusCode === 401){
