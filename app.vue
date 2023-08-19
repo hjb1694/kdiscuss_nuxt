@@ -2,7 +2,7 @@
   <div>
     <FlashNotif v-if="isFlashMessageOpen" :message-type="flashMessageType" :message="flashMessageContent" @flashhide="onFlashMessageHide" />
     <NuxtLayout>
-      hi
+      <NuxtPage />
     </NuxtLayout>
   </div>
 </template>
