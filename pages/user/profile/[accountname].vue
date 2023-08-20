@@ -5,13 +5,13 @@
             <div class="profile-heading__content">
                 <img class="profile-heading__profile-img" src="@/assets/img/default_profile_img.jpeg" alt="profile image" />
                 <div class="profile-heading__account-name">
-                    {{ $route.params.accountname }}
+                    {{ profileAccountName }}
                 </div>
             </div>
         </div>
         <div class="profile-body">
             <div class="profile-sidebar">
-                <div class="profile-menu">
+                <div v-if="!isSelf" class="profile-menu">
                     <button class="profile-menu__button">
                         Follow
                     </button>
@@ -22,31 +22,85 @@
                         Block
                     </button>
                 </div>
-            </div>
-            <div class="profile-about">
-                <h2>About Me</h2>
-                <div class="about-tile">
-                    <h3 class="about-tile__heading">My Bio</h3>
-                    <div class="about-tile__content">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae consectetur incidunt nisi adipisci culpa repellat maxime, deserunt minus exercitationem delectus non, illo excepturi debitis consequatur laborum magnam. Ipsum, eius itaque!
-                    </div>
-                </div>
-                <div class="about-tile">
-                    <h3 class="about-tile__heading">My Location</h3>
-                    <div class="about-tile__content">
-                        Knoxville, Tennessee
-                    </div>
-                </div>
-                <div class="about-tile">
-                    <h3 class="about-tile__heading">Gender</h3>
-                    <div class="about-tile__content">
-                        Male
-                    </div>
+                <div v-else class="profile-menu">
+                    <button class="profile-menu__button">
+                        Edit Profile
+                    </button>
                 </div>
             </div>
+            <template v-if="isLoggedIn">
+                <div class="profile-about">
+                    <h2>About Me</h2>
+                    <div class="about-tile">
+                        <h3 class="about-tile__heading">My Bio</h3>
+                        <div class="about-tile__content">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae consectetur incidunt nisi adipisci culpa repellat maxime, deserunt minus exercitationem delectus non, illo excepturi debitis consequatur laborum magnam. Ipsum, eius itaque!
+                        </div>
+                    </div>
+                    <div class="about-tile">
+                        <h3 class="about-tile__heading">My Location</h3>
+                        <div class="about-tile__content">
+                            Knoxville, Tennessee
+                        </div>
+                    </div>
+                    <div class="about-tile">
+                        <h3 class="about-tile__heading">Gender</h3>
+                        <div class="about-tile__content">
+                            Male
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="login-instruction">
+                    Login or Register to view {{ profileAccountName }}'s profile.
+                </div>
+            </template>
         </div>
     </div>
 </template>
+
+<script lang="ts" setup>
+
+    import { watch } from 'vue';
+
+    const { $auth } = useNuxtApp();
+    const { params } = useRoute();
+
+    const isLoggedIn = computed(() => $auth.isLoggedIn.value);
+    const authAccountName = computed(() => $auth.accountName.value);
+
+
+    const profileAccountName = ref<string>(params.accountname as string);
+    const isSelf = ref<boolean>(false);
+
+    const init = () => {
+
+        if(isLoggedIn.value){
+
+            if(authAccountName.value === profileAccountName.value){
+                isSelf.value = true;
+            }else{
+                isSelf.value = false;
+            }
+
+
+        }else{
+            isSelf.value = false;
+        }
+
+    }
+
+    watch(() => isLoggedIn.value, () => {
+        console.log('init called!');
+        init();
+    });
+
+    init();
+
+
+
+</script>
 
 <style lang="scss" scoped>
 
@@ -101,6 +155,15 @@
         }
     }
 
+    .login-instruction {
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 1rem;
+        font-size: 1.4rem;
+        border-radius: 3px;
+        color:#555;
+    }
+
     .profile-body{
         padding:1.5rem;
         max-width:120rem;
@@ -108,6 +171,7 @@
         display:grid;
         grid-gap:2rem;
         grid-template-columns:30rem auto;
+        align-items: start;
     }
 
     .profile-sidebar, 
