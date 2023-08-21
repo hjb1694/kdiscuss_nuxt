@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 
-    import { watch } from 'vue';
+    import { watch, reactive } from 'vue';
 
     const { $auth } = useNuxtApp();
     const { params } = useRoute();
@@ -73,6 +73,37 @@
 
     const profileAccountName = ref<string>(params.accountname as string);
     const isSelf = ref<boolean>(false);
+
+    const profileData = reactive({
+        profileUserId: null,
+        isPrivateProfile: false, 
+        profileImageURI: null,
+        social: {
+            userIsBlocked: false, 
+            followStatus: null
+        }, 
+        about: {
+            bio: null, 
+            location: null, 
+            gender: null
+        }
+    });
+
+    const fetchPublicProfile = async () => {
+
+        const data = await $fetch(`/api/profile/public?account_name=${profileAccountName.value}`);
+
+        profileData.profileUserId = data.user_id;
+        profileData.profileImageURI = data.profile_image_uri;
+
+        profileData.isPrivateProfile = false;
+        profileData.social.userIsBlocked = false;
+        profileData.social.followStatus = null;
+        profileData.about.bio = null;
+        profileData.about.location = null;
+        profileData.about.gender = null;
+
+    }
 
     const init = () => {
 
@@ -87,12 +118,12 @@
 
         }else{
             isSelf.value = false;
+            fetchPublicProfile();
         }
 
     }
 
     watch(() => isLoggedIn.value, () => {
-        console.log('init called!');
         init();
     });
 
