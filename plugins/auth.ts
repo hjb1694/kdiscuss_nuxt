@@ -2,6 +2,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
     let isLoggedIn = useState<boolean>('isLoggedIn', () => false);
     let accountName = useState<string | null>('accountName', () => null);
+    let userId = useState<number | null>('userId', () => null);
 
     if(process.server){
 
@@ -13,6 +14,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
             if(authData && authData.account_name){
                 isLoggedIn.value = true;
                 accountName.value = authData.account_name;
+                userId.value = authData.user_id;
             }
         }
         catch(e){}
@@ -38,6 +40,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
             isLoggedIn.value = true;
             accountName.value = data.account_name;
+            userId.value = data.user_id;
 
         }catch(e){
             console.error(e);
@@ -50,7 +53,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
         try{
 
-            await $fetch('/api/auth/register', {
+            const data = await $fetch('/api/auth/register', {
                 method: 'POST', 
                 headers: {
                     'Content-Type': 'application/json', 
@@ -67,6 +70,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
             isLoggedIn.value = true;
             accountName.value = account_name;
+            userId.value = data.user_id;
 
         }catch(e){
             console.error(e);

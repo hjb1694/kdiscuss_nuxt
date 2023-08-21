@@ -127,7 +127,7 @@
         init();
     });
 
-    init();
+    if(process.server) init();
 
 
 
