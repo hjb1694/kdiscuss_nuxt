@@ -64,8 +64,20 @@
 
     import { watch, reactive } from 'vue';
 
+    definePageMeta({
+        middleware: defineNuxtRouteMiddleware(async (to) => {
+            const data: any = await $fetch(`/api/profile/profile-exists?account_name=${to.params.accountname}`);
+
+            if(!data.exists){
+                console.log('not exists');
+                return navigateTo('/user/not-found');
+            }
+        })
+    });
+
     const { $auth } = useNuxtApp();
     const { params } = useRoute();
+    const app = useNuxtApp();
 
     const isLoggedIn = computed(() => $auth.isLoggedIn.value);
     const authAccountName = computed(() => $auth.accountName.value);
@@ -105,7 +117,19 @@
 
     }
 
-    const init = () => {
+    const init = async () => {
+
+        if(process.client){
+
+            const data: any = await $fetch(`/api/profile/profile-exists?account_name=${profileAccountName.value}`);
+
+            if(!data.exists){
+                console.log('not exists');
+                await navigateTo('/');
+                return;
+            }
+
+        }
 
         if(isLoggedIn.value){
 
