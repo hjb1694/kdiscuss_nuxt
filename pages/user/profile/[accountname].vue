@@ -10,25 +10,26 @@
             </div>
         </div>
         <div class="profile-body">
-            <div class="profile-sidebar">
-                <div v-if="!isSelf" class="profile-menu">
-                    <button class="profile-menu__button">
-                        Follow
-                    </button>
-                    <button class="profile-menu__button">
-                        Message
-                    </button>
-                    <button class="profile-menu__button">
-                        Block
-                    </button>
-                </div>
-                <div v-else class="profile-menu">
-                    <button class="profile-menu__button">
+            <div v-if="!profileData.isDeactivated" class="profile-sidebar">
+                <div class="profile-menu">
+                    <template v-if="!isSelf">
+                        <button class="profile-menu__button">
+                            Follow
+                        </button>
+                        <button class="profile-menu__button">
+                            Message
+                        </button>
+                        <button class="profile-menu__button">
+                            Block
+                        </button>
+                    </template>
+                    <button v-else class="profile-menu__button">
                         Edit Profile
                     </button>
                 </div>
             </div>
-            <template v-if="isLoggedIn">
+            <div v-else></div>
+            <template v-if="isLoggedIn && !profileData.isPrivateProfile">
                 <div class="profile-about">
                     <h2>About Me</h2>
                     <div class="about-tile">
@@ -51,8 +52,13 @@
                     </div>
                 </div>
             </template>
-            <template v-else>
-                <div class="login-instruction">
+            <template v-if="isLoggedIn && profileData.isPrivateProfile">
+                <div class="private-banner">
+                    Private Profile
+                </div>
+            </template>
+            <template v-if="!isLoggedIn">
+                <div class="login-instruction-banner">
                     Login or Register to view {{ profileAccountName }}'s profile.
                 </div>
             </template>
@@ -77,16 +83,16 @@
 
     const { $auth } = useNuxtApp();
     const { params } = useRoute();
-    const app = useNuxtApp();
 
     const isLoggedIn = computed(() => $auth.isLoggedIn.value);
     const authAccountName = computed(() => $auth.accountName.value);
 
 
     const profileAccountName = ref<string>(params.accountname as string);
-    const isSelf = ref<boolean>(false);
+    const isSelf = ref<boolean>(isLoggedIn.value);
 
     const profileData = reactive({
+        isDeactivated: false,
         profileUserId: null,
         isPrivateProfile: false, 
         profileImageURI: null,
@@ -108,12 +114,23 @@
         profileData.profileUserId = data.user_id;
         profileData.profileImageURI = data.profile_image_uri;
 
+        profileData.isDeactivated= false;
         profileData.isPrivateProfile = false;
         profileData.social.userIsBlocked = false;
         profileData.social.followStatus = null;
         profileData.about.bio = null;
         profileData.about.location = null;
         profileData.about.gender = null;
+
+    }
+
+    const fetchProfileForAuthUser = async () => {
+
+        const data = await $fetch(`/api/profile/auth-user?profile_user_account_name=${profileAccountName.value}`, {
+            headers: useRequestHeaders(['cookie'])
+        });
+
+        console.log(data);
 
     }
 
@@ -139,6 +156,7 @@
                 isSelf.value = false;
             }
 
+            fetchProfileForAuthUser();
 
         }else{
             isSelf.value = false;
@@ -151,7 +169,7 @@
         init();
     });
 
-    if(process.server) init();
+    init();
 
 
 
@@ -210,7 +228,8 @@
         }
     }
 
-    .login-instruction {
+    .login-instruction-banner, 
+    .private-banner {
         background: #fff;
         border: 1px solid #ccc;
         padding: 1rem;
