@@ -13,7 +13,7 @@
             <div v-if="!profileData.isDeactivated" class="profile-sidebar">
                 <div class="profile-menu">
                     <template v-if="!isSelf">
-                        <button v-if="followButtonIsShown" class="profile-menu__button">
+                        <button v-if="followButtonIsShown" @click="followUser" class="profile-menu__button">
                             Follow
                         </button>
                         <button v-if="cancelFollowButtonIsShown" class="profile-menu__button">
@@ -25,7 +25,7 @@
                         <button class="profile-menu__button">
                             Message
                         </button>
-                        <button @click="blockUser" v-if="blockButtonIsShown" class="profile-menu__button">
+                        <button v-if="blockButtonIsShown" @click="blockUser" class="profile-menu__button">
                             Block
                         </button>
                         <button v-if="unblockButtonIsShown" class="profile-menu__button">
@@ -159,8 +159,6 @@
             headers: useRequestHeaders(['cookie'])
         });
 
-        console.log(data);
-
         profileData.isDeactivated = data.isDeactivated;
         profileData.isPrivateProfile = data.is_private_profile;
         profileData.accountType = data.account_type
@@ -176,6 +174,14 @@
     }
 
     const blockUser = async () => {
+
+        if(!isLoggedIn.value){
+            return modalStore.toggleAuthModal(true);
+        }
+
+    }
+
+    const followUser = async () => {
 
         if(!isLoggedIn.value){
             return modalStore.toggleAuthModal(true);
