@@ -13,7 +13,7 @@
             <div v-if="!profileData.isDeactivated" class="profile-sidebar">
                 <div class="profile-menu">
                     <template v-if="!isSelf">
-                        <button class="profile-menu__button">
+                        <button v-if="followButtonIsShown" class="profile-menu__button">
                             Follow
                         </button>
                         <button class="profile-menu__button">
@@ -34,20 +34,29 @@
                     <h2>About Me</h2>
                     <div class="about-tile">
                         <h3 class="about-tile__heading">My Bio</h3>
-                        <div class="about-tile__content">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae consectetur incidunt nisi adipisci culpa repellat maxime, deserunt minus exercitationem delectus non, illo excepturi debitis consequatur laborum magnam. Ipsum, eius itaque!
+                        <div v-if="profileData.about.bio !== null" class="about-tile__content">
+                            {{ profileData.about.bio }}
+                        </div>
+                        <div v-else class="about-tile__content">
+                            <i>[No Bio]</i>
                         </div>
                     </div>
                     <div class="about-tile">
                         <h3 class="about-tile__heading">My Location</h3>
-                        <div class="about-tile__content">
-                            Knoxville, Tennessee
+                        <div v-if="profileData.about.location" class="about-tile__content">
+                            {{ profileData.about.location }}
+                        </div>
+                        <div v-else class="about-tile__content">
+                            <i>[Not Specified]</i>
                         </div>
                     </div>
                     <div class="about-tile">
                         <h3 class="about-tile__heading">Gender</h3>
-                        <div class="about-tile__content">
-                            Male
+                        <div v-if="profileData.about.gender !== 'NOT_SPECIFIED'" class="about-tile__content">
+                            {{ profileData.about.gender }}
+                        </div>
+                        <div v-else class="about-tile__content">
+                            <i>[Not Specified]</i>
                         </div>
                     </div>
                 </div>
@@ -86,26 +95,40 @@
 
     const isLoggedIn = computed(() => $auth.isLoggedIn.value);
     const authAccountName = computed(() => $auth.accountName.value);
-
-
     const profileAccountName = ref<string>(params.accountname as string);
-    const isSelf = ref<boolean>(isLoggedIn.value);
+    const isSelf = ref<boolean>(authAccountName.value === profileAccountName.value);
 
     const profileData = reactive({
         isDeactivated: false,
         profileUserId: null,
         isPrivateProfile: false, 
         profileImageURI: null,
+        accountType: null,
         social: {
-            userIsBlocked: false, 
+            userViewedIsBlocked: false, 
             followStatus: null
         }, 
         about: {
             bio: null, 
             location: null, 
-            gender: null
+            gender: 'NOT_SPECIFIED'
         }
     });
+
+    const followButtonIsShown = computed(() => profileData.social.followStatus === null);
+
+    const resetProfileData = () => {
+        profileData.isDeactivated = false;
+        profileData.profileUserId = null;
+        profileData.isPrivateProfile = false;
+        profileData.profileImageURI = null;
+        profileData.accountType = null;
+        profileData.social.userViewedIsBlocked = false;
+        profileData.social.followStatus = null;
+        profileData.about.bio = null;
+        profileData.about.location = null;
+        profileData.about.gender = 'NOT_SPECIFIED';
+    }
 
     const fetchPublicProfile = async () => {
 
@@ -113,14 +136,6 @@
 
         profileData.profileUserId = data.user_id;
         profileData.profileImageURI = data.profile_image_uri;
-
-        profileData.isDeactivated= false;
-        profileData.isPrivateProfile = false;
-        profileData.social.userIsBlocked = false;
-        profileData.social.followStatus = null;
-        profileData.about.bio = null;
-        profileData.about.location = null;
-        profileData.about.gender = null;
 
     }
 
@@ -132,9 +147,23 @@
 
         console.log(data);
 
+        profileData.isDeactivated = data.isDeactivated;
+        profileData.isPrivateProfile = data.is_private_profile;
+        profileData.accountType = data.account_type
+        profileData.social.followStatus = data.social.follow_status;
+        profileData.social.userViewedIsBlocked = data.social.user_viewed_is_blocked;
+
+        if(!profileData.isPrivateProfile){
+            profileData.about.bio = data.about.bio;
+            profileData.about.gender = data.about.gender;
+            profileData.about.location = data.about.location;
+        }
+
     }
 
     const init = async () => {
+
+        resetProfileData();
 
         if(process.client){
 
@@ -169,7 +198,7 @@
         init();
     });
 
-    init();
+    if(process.server) init();
 
 
 
