@@ -114,6 +114,7 @@
         isPrivateProfile: false, 
         profileImageURI: null,
         accountType: null,
+        role: '',
         social: {
             userViewedIsBlocked: false, 
             followStatus: null
@@ -128,7 +129,9 @@
     const followButtonIsShown = computed(() => profileData.social.followStatus === null);
     const cancelFollowButtonIsShown = computed(() => profileData.social.followStatus === 'PENDING');
     const unfollowButtonIsShown = computed(() => profileData.social.followStatus === 'APPROVED');
-    const blockButtonIsShown = computed(() => !profileData.social.userViewedIsBlocked);
+    const blockButtonIsShown = computed(() => {
+        return !profileData.social.userViewedIsBlocked && !['ADMIN','STAFF'].includes(profileData.role)
+    });
     const unblockButtonIsShown = computed(() => profileData.social.userViewedIsBlocked);
 
     const resetProfileData = () => {
@@ -137,6 +140,7 @@
         profileData.isPrivateProfile = false;
         profileData.profileImageURI = null;
         profileData.accountType = null;
+        profileData.role = '';
         profileData.social.userViewedIsBlocked = false;
         profileData.social.followStatus = null;
         profileData.about.bio = null;
@@ -150,6 +154,7 @@
 
         profileData.profileUserId = data.user_id;
         profileData.profileImageURI = data.profile_image_uri;
+        profileData.role = data.role;
 
     }
 
@@ -162,6 +167,7 @@
         profileData.isDeactivated = data.isDeactivated;
         profileData.isPrivateProfile = data.is_private_profile;
         profileData.accountType = data.account_type
+        profileData.role = data.role;
         profileData.social.followStatus = data.social.follow_status;
         profileData.social.userViewedIsBlocked = data.social.user_viewed_is_blocked;
 
@@ -177,6 +183,22 @@
 
         if(!isLoggedIn.value){
             return modalStore.toggleAuthModal(true);
+        }
+
+        try{
+
+            await $fetch('/api/social/block-action', {
+                headers: {
+                    'Content-Type': 'application/json'
+                }, 
+                body: {
+                    blockedUserId: profileData.profileUserId, 
+                    action: 'BLOCK'
+                }
+            });
+
+        }catch(e){
+            console.error(e);
         }
 
     }
