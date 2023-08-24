@@ -16,11 +16,20 @@
                         <button v-if="followButtonIsShown" class="profile-menu__button">
                             Follow
                         </button>
+                        <button v-if="cancelFollowButtonIsShown" class="profile-menu__button">
+                            Cancel Follow Request
+                        </button>
+                        <button v-if="unfollowButtonIsShown">
+                            Unfollow
+                        </button>
                         <button class="profile-menu__button">
                             Message
                         </button>
-                        <button class="profile-menu__button">
+                        <button @click="blockUser" v-if="blockButtonIsShown" class="profile-menu__button">
                             Block
+                        </button>
+                        <button v-if="unblockButtonIsShown" class="profile-menu__button">
+                            Unblock
                         </button>
                     </template>
                     <button v-else class="profile-menu__button">
@@ -92,6 +101,7 @@
 
     const { $auth } = useNuxtApp();
     const { params } = useRoute();
+    const modalStore = useModalStore();
 
     const isLoggedIn = computed(() => $auth.isLoggedIn.value);
     const authAccountName = computed(() => $auth.accountName.value);
@@ -116,6 +126,10 @@
     });
 
     const followButtonIsShown = computed(() => profileData.social.followStatus === null);
+    const cancelFollowButtonIsShown = computed(() => profileData.social.followStatus === 'PENDING');
+    const unfollowButtonIsShown = computed(() => profileData.social.followStatus === 'APPROVED');
+    const blockButtonIsShown = computed(() => !profileData.social.userViewedIsBlocked);
+    const unblockButtonIsShown = computed(() => profileData.social.userViewedIsBlocked);
 
     const resetProfileData = () => {
         profileData.isDeactivated = false;
@@ -157,6 +171,14 @@
             profileData.about.bio = data.about.bio;
             profileData.about.gender = data.about.gender;
             profileData.about.location = data.about.location;
+        }
+
+    }
+
+    const blockUser = async () => {
+
+        if(!isLoggedIn.value){
+            return modalStore.toggleAuthModal(true);
         }
 
     }
