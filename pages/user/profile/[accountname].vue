@@ -72,12 +72,14 @@
             </template>
             <template v-if="isLoggedIn && profileData.isPrivateProfile">
                 <div class="private-banner">
-                    Private Profile
+                    <div class="login-instruction-banner__text">Private Profile</div>
+                    <Icon icon="fa fa-eye-slash" color="#cccccc" :styles="{fontSize: '50px'}"/>
                 </div>
             </template>
             <template v-if="!isLoggedIn">
                 <div class="login-instruction-banner">
-                    Login or Register to view {{ profileAccountName }}'s profile.
+                    <div class="login-instruction-banner__text">Login or Register to view {{ profileAccountName }}'s profile.</div>
+                    <Icon icon="fa fa-eye-slash" color="#cccccc" :styles="{fontSize: '50px'}"/>
                 </div>
             </template>
         </div>
@@ -87,6 +89,10 @@
 <script lang="ts" setup>
 
     import { watch, reactive } from 'vue';
+    import { useFlashMessageStore } from '@/stores/flash_messages';
+    import { FlashMessageType } from '@/types';
+
+    const flashMessageStore = useFlashMessageStore();
 
     definePageMeta({
         middleware: defineNuxtRouteMiddleware(async (to) => {
@@ -196,6 +202,11 @@
                     action: 'BLOCK'
                 }
             });
+
+            profileData.social.followStatus = null;
+            profileData.social.userViewedIsBlocked = true;
+
+            flashMessageStore.showFlashMessage(FlashMessageType.SUCCESS, 'User successfully blocked');
 
         }catch(e){
             console.error(e);
@@ -312,9 +323,16 @@
         background: #fff;
         border: 1px solid #ccc;
         padding: 1rem;
-        font-size: 1.4rem;
+        font-size: 2rem;
         border-radius: 3px;
-        color:#555;
+        color:#888;
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__text {
+            margin-bottom: 2rem;
+        }
     }
 
     .profile-body{

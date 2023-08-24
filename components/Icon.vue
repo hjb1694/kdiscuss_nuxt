@@ -2,7 +2,7 @@
     <client-only>
         <font-awesome-icon 
         :icon="icon" 
-        :style="{color}"
+        :style="{color, ...styles}"
         />
     </client-only>
 </template>
@@ -18,6 +18,11 @@
         }, 
         color: {
             type: String as PropType<string>
+        }, 
+        styles: {
+            type: Object as PropType<object>, 
+            required: false, 
+            default: {}
         }
     });
 
