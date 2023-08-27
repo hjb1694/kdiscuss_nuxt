@@ -38,5 +38,41 @@ router.post('/block-action', defineEventHandler(async (event) => {
 
 }));
 
+router.post('/follow-action', defineEventHandler(async (event) => {
+
+    try{
+
+        const body = await readBody(event);
+        const followedUserId = body['followed_user_id'];
+        const followAction = body['action'];
+        const cookies = parseCookies(event);
+        const authData = evalToken(cookies['Authorization'], jwtSecret);
+
+        await $fetch(`${accountAPIUri}/social/follow-action`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json', 
+                'x-api-key': accountAPIKey
+            }, 
+            body: {
+                follower_user_id: authData.user_id, 
+                followed_user_id: followedUserId,
+                action: followAction
+            }
+        })
+
+        return {
+            success: true
+        }
+
+
+    }
+    catch(e){
+        console.error(e);
+        return ResponseError.respondWithError(e);
+    }
+
+}))
+
 
 export default useBase('/api/social', router.handler);

@@ -16,10 +16,10 @@
                         <button v-if="followButtonIsShown" @click="followUser" class="profile-menu__button">
                             Follow
                         </button>
-                        <button v-if="cancelFollowButtonIsShown" class="profile-menu__button">
+                        <button v-if="cancelFollowButtonIsShown" @click="unfollowUser" class="profile-menu__button">
                             Cancel Follow Request
                         </button>
-                        <button v-if="unfollowButtonIsShown">
+                        <button v-if="unfollowButtonIsShown" @click="unfollowUser" class="profile-menu__button">
                             Unfollow
                         </button>
                         <button class="profile-menu__button">
@@ -109,8 +109,8 @@
     const { params } = useRoute();
     const modalStore = useModalStore();
 
-    const isLoggedIn = computed(() => $auth.isLoggedIn.value);
-    const authAccountName = computed(() => $auth.accountName.value);
+    const isLoggedIn = computed<boolean>(() => $auth.isLoggedIn.value);
+    const authAccountName = computed<string | null>(() => $auth.accountName.value);
     const profileAccountName = ref<string>(params.accountname as string);
     const isSelf = ref<boolean>(authAccountName.value === profileAccountName.value);
 
@@ -123,7 +123,7 @@
         role: '',
         social: {
             userViewedIsBlocked: false, 
-            followStatus: null
+            followStatus: ''
         }, 
         about: {
             bio: null, 
@@ -132,10 +132,10 @@
         }
     });
 
-    const followButtonIsShown = computed(() => profileData.social.followStatus === null);
-    const cancelFollowButtonIsShown = computed(() => profileData.social.followStatus === 'PENDING');
-    const unfollowButtonIsShown = computed(() => profileData.social.followStatus === 'APPROVED');
-    const blockButtonIsShown = computed(() => {
+    const followButtonIsShown = computed<boolean>(() => !profileData.social.followStatus);
+    const cancelFollowButtonIsShown = computed<boolean>(() => profileData.social.followStatus === 'PENDING');
+    const unfollowButtonIsShown = computed<boolean>(() => profileData.social.followStatus === 'APPROVED');
+    const blockButtonIsShown = computed<boolean>(() => {
         return !profileData.social.userViewedIsBlocked && !['ADMIN','STAFF'].includes(profileData.role)
     });
     const unblockButtonIsShown = computed(() => profileData.social.userViewedIsBlocked);
@@ -148,7 +148,7 @@
         profileData.accountType = null;
         profileData.role = '';
         profileData.social.userViewedIsBlocked = false;
-        profileData.social.followStatus = null;
+        profileData.social.followStatus = '';
         profileData.about.bio = null;
         profileData.about.location = null;
         profileData.about.gender = 'NOT_SPECIFIED';
@@ -203,7 +203,7 @@
                 }
             });
 
-            profileData.social.followStatus = null;
+            profileData.social.followStatus = '';
             profileData.social.userViewedIsBlocked = true;
 
             flashMessageStore.showFlashMessage(FlashMessageType.SUCCESS, 'User successfully blocked');
@@ -218,6 +218,46 @@
 
         if(!isLoggedIn.value){
             return modalStore.toggleAuthModal(true);
+        }
+
+        try{
+
+            await $fetch('/api/social/follow-action', {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json'
+                }, 
+                body: {
+                    followed_user_id: profileData.profileUserId,
+                    action: 'FOLLOW'
+                }
+            });
+
+            profileData.social.followStatus = 'PENDING';
+
+        }catch(e){
+            console.error(e);
+        }
+
+    }
+
+    const unfollowUser = async () => {
+
+        try{
+
+        await $fetch('/api/social/follow-action', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json'
+            }, 
+            body: {
+                followed_user_id: profileData.profileUserId,
+                action: 'UNFOLLOW'
+            }
+        })
+
+        }catch(e){
+            console.error(e);
         }
 
     }
